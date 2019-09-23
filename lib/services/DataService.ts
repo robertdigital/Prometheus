@@ -1,4 +1,5 @@
 import * as request from "request-promise-native";
+import {Client} from "coinbase"
 
 const COINBASE_API: string = process.env.COINBASE_API ? process.env.COINBASE_API : '';
 /**
@@ -10,6 +11,7 @@ export class DataService {
     private options = {
         uri: COINBASE_API
     };
+
     /**
      * retrieves the current price for bitcoin from Coinbase
      *
