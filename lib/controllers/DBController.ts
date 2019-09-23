@@ -1,5 +1,5 @@
 import { Db, MongoClient } from "mongodb";
-import { PriceDataModel } from "../models/cryptoPriceDataModels";
+import { PriceDataModel } from "../models/DatabaseModels";
 
 const MONGODB_URI: string = process.env.MONGODB_URI ? process.env.MONGODB_URI : '';
 const DB_NAME: string = process.env.DB_NAME ? process.env.DB_NAME : ''; 

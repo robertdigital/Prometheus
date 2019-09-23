@@ -1,7 +1,7 @@
 import { Handler, Context, Callback } from "aws-lambda";
-import { DBController } from "./controller/DBController";
+import { DBController } from "./controllers/DBController";
 import { Db } from "mongodb";
-import { PriceDataModel } from "./models/cryptoPriceDataModels";
+import { PriceDataModel } from "./models/DatabaseModels";
 import { Price, Client } from "coinbase";
 
 const API_KEY: string = process.env.API_KEY ? process.env.API_KEY : '';
@@ -20,6 +20,7 @@ const handler: Handler = (event: any, context: Context, callback: Callback) => {
     // - makes needed calls and returns true or false if buy or not
     // - maybe also find how much to buy
     // 2. Execute the order
+
     coinbaseClient.getBuyPrice({ 'currencyPair': 'BTC-USD' }, (error: Error, price: Price) => {
         if(price){
             if (!dbController) {
