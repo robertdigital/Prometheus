@@ -3,7 +3,7 @@ import { Db } from 'mongodb';
 
 export class Evaluator {
 
-    public evaluatePrice(price: number):boolean{
+    public async evaluatePrice(price: number,movingAverage:number){
         console.log(price);
         return true;
     }

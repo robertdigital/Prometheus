@@ -11,8 +11,10 @@ export class DBController {
 
     public connectToDatabase(): Promise<Db>{
         if(this.cachedDb){
+            console.info("***Using cached DB***")
             return Promise.resolve(this.cachedDb);
         } else {
+            console.info("***Creating new DB connection instance***")
             return MongoClient.connect(MONGODB_URI,{ useNewUrlParser: true, useUnifiedTopology: true}).then(Client=>{
                 this.cachedDb = Client.db(DB_NAME);
                 return this.cachedDb;
@@ -22,9 +24,21 @@ export class DBController {
 
     public savePriceData(db:Db,data:PriceDataModel){
        return db.collection(PRICE_COLLECTION).insertOne(data).then(()=>{
-           return { statusCode: 200, body: "Success"};
+           console.info("***Saved data to database successfully***")
+           return data.price;
        }).catch(err=>{
-           return { statusCode: 500, body:"Error"};
+           console.error("-XXXXX- ERROR: FAILED TO STORE IN DATABASE -XXXXX-")
+           return 0;
        });
+    }
+
+    public async getMovingAverage(db:Db){
+        let x = await db.collection(PRICE_COLLECTION).find().sort({$natural : -1}).limit(20).toArray();
+        let average = 0;
+        x.forEach((document:PriceDataModel)=>{
+            average += document.price;
+        });
+        average = average/20;
+        return average;
     }
 }
