@@ -3,7 +3,7 @@ import { DBController } from "./controllers/DBController";
 import { PriceDataModel } from "./models/DatabaseModels";
 import { Evaluator } from './workers/Evaluator';
 import { APIController } from "./controllers/APIController";
-import { Executor } from "workers/Executor";
+import { Executor } from "./workers/Executor";
 
 let dbController: DBController | null = null;
 let apiController: APIController | null = null;
@@ -21,31 +21,32 @@ const handler: Handler = (event: any, context: Context, callback: Callback) => {
     }
 
     // STEPS
-    // 1. Get Price and Moving Average
+    // 1. Get Price
     // - Store Price in DB
-    // 2. Evaluate whether to buy
-    // - Evaluator class gets passed api client
-    // - makes needed calls and returns true or false if buy or not
+    // - retrieve historical data
+    // 2. Using current price and historical data, evaluate whether to buy
+    // - Runs technical analysis formulas to determine whether to buy
     // - maybe also find how much to buy
     // 3. Execute the order
     // - Save transaction in DB
+
     Promise.all([dbController.connectToDatabase(), apiController.getBuyPrice()])
         .then((dbAndPrice: Array<any>) => {
-            //Preliminary info needed
-            return Promise.all([dbController.getMovingAverage(dbAndPrice[0]), dbController.savePriceData(dbAndPrice[0], new PriceDataModel(parseFloat(dbAndPrice[1].data.amount)))])
+            //Preliminary info needed 
+            return dbController.savePriceData(dbAndPrice[0], new PriceDataModel(parseFloat(dbAndPrice[1].data.amount))).then((price) => {
+                return dbController.getHistoricalData(dbAndPrice[0],250);
+            })
         })
-        .then((movingAverageAndPrice: Array<any>) => {
+        .then((historicalData: Array<number>) => {
             // Evaluator
             if (!evaluator) {
                 evaluator = new Evaluator();
             }
-            let price = movingAverageAndPrice[1];
-            let movingAverage = movingAverageAndPrice[0];
-            return evaluator.evaluatePrice(price, movingAverage);
+            return evaluator.evaluatePrice(historicalData);
         })
         .then((res) => {
             // Executor
-            if (!executor){
+            if (!executor) {
                 executor = new Executor();
             }
             return executor.executeOrder();
