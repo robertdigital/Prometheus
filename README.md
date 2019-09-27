@@ -4,7 +4,13 @@ Node JS Crypto trading bot.
 - Intended to only use within the free-tier usage restrictions of AWS and MongoDB Atlas.
 - Designed with Coinbase API in mind. This decision may change in the future.
 
-Work in progress. Currently only gets price from api and stores to database.
+Work in progress
+
+Issues will be updated soon with task items for min-viable product. 
+
+
+
+
 
 Will first implement an evaluator, which will produce a buy or a sell rating based on some factors. Will then implement an executor which will take the rating given by the evaluator and execute an order. 
 
