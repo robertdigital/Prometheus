@@ -78,7 +78,7 @@ export class TechnicalAnalyzer {
     public macd(values:Array<number>){
         let twelvePointEMA = this.ema(values,12)[0];
         let twentySixPointEMA = this.ema(values,26)[0];
-        return (twelvePointEMA - twelvePointEMA);
+        return (twelvePointEMA - twentySixPointEMA);
     }
 
 
