@@ -66,6 +66,14 @@ export class TechnicalAnalyzer {
 
     }
 
+    public simpleMovingAverage(values: Array<number>, range: number){
+        let amount: number = 0;
+        for(let i=0; i<range;i++){
+            amount += values[i];
+        }
+        return amount/range
+    }
+
 
 
 }
