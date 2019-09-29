@@ -15,7 +15,7 @@ export class TechnicalAnalyzer {
      * @returns {Array<number>} array of exponential moving averages
      * @memberof TechnicalAnalyzer
      */
-    public exponentialMovingAverage(prices: Array<number>, range: number): Array<number> {
+    public ema(prices: Array<number>, range: number): Array<number> {
         // prices come in with the most recent price in position 0
         // need to reverse array for calculation then re-reverse resulting array
         let reversedPrices = prices.reverse();
@@ -31,7 +31,8 @@ export class TechnicalAnalyzer {
     }
 
     //TO-DO: Documentation 
-    public relativeStrengthIndex(prices: Array<number>) {
+    // Method to return the rsi(Relative Strength Index) of a set of prices
+    public rsi(prices: Array<number>) {
         let averageGain = this.averageChange(prices,true);
         let averageLoss = this.averageChange(prices,false);
 
@@ -66,12 +67,18 @@ export class TechnicalAnalyzer {
 
     }
 
-    public simpleMovingAverage(values: Array<number>, range: number){
+    public sma(values: Array<number>, range: number){
         let amount: number = 0;
         for(let i=0; i<range;i++){
             amount += values[i];
         }
         return amount/range
+    }
+
+    public macd(values:Array<number>){
+        let twelvePointEMA = this.ema(values,12)[0];
+        let twentySixPointEMA = this.ema(values,26)[0];
+        return (twelvePointEMA - twelvePointEMA);
     }
 
 
