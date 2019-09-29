@@ -13,6 +13,9 @@ let executor: Executor | null = null;
 const handler: Handler = (event: any, context: Context, callback: Callback) => {
     context.callbackWaitsForEmptyEventLoop = false;
 
+    console.log("EVENT: ",event);
+    console.log("CONTEXT:",context);
+
     if (!apiController) {
         apiController = new APIController();
     }
