@@ -8,11 +8,11 @@
 export class PriceDataModel {
     public date: Date;
     public price: number;
-    public dayMark: number;
+    public timeMark: number;
 
-    constructor(p: number, mark: number = 0) {
+    constructor(p: number, mark: number) {
         this.date = new Date();
         this.price = p;
-        this.dayMark = mark;
+        this.timeMark = mark;
     }
 }

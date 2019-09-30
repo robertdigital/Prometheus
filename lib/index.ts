@@ -12,17 +12,14 @@ let executor: Executor | null = null;
 
 const handler: Handler = (event: any, context: Context, callback: Callback) => {
     context.callbackWaitsForEmptyEventLoop = false;
-
-    console.log("EVENT: ",event);
-    console.log("CONTEXT:",context);
-
+    let date: Date = new Date(event.time);
+    let midDay:number;
     if (!apiController) {
         apiController = new APIController();
     }
     if (!dbController) {
         dbController = new DBController();
     }
-
     // STEPS
     // 1. Get Price
     // - Store Price in DB
@@ -36,8 +33,8 @@ const handler: Handler = (event: any, context: Context, callback: Callback) => {
     Promise.all([dbController.connectToDatabase(), apiController.getBuyPrice()])
         .then((dbAndPrice: Array<any>) => {
             //Preliminary info needed 
-            return dbController.savePriceData(dbAndPrice[0], new PriceDataModel(parseFloat(dbAndPrice[1].data.amount))).then((price) => {
-                return dbController.getHistoricalData(dbAndPrice[0],250);
+            return dbController.savePriceData(dbAndPrice[0], new PriceDataModel(parseFloat(dbAndPrice[1].data.amount),midDay)).then((price) => {
+                return dbController.getHistoricalData(dbAndPrice[0],250,'day');
             })
         })
         .then((historicalData: Array<number>) => {
