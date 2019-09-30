@@ -1,3 +1,5 @@
+const RECORD_RATE: number = process.env.RECORD_RATE ? parseInt(process.env.RECORD_RATE) : 2;
+
 /**
  * Utility class with functions to get technical indicators on a security.
  *
@@ -6,6 +8,13 @@
  */
 export class TechnicalAnalyzer {
 
+    public sma(values: Array<number>, range: number) {
+        let amount: number = 0;
+        for (let i = 0; i < range; i++) {
+            amount += values[i];
+        }
+        return amount / range
+    }
     /**
      * Gets the Exponential moving average of a set of values
      * 
@@ -15,7 +24,7 @@ export class TechnicalAnalyzer {
      * @returns {Array<number>} array of exponential moving averages
      * @memberof TechnicalAnalyzer
      */
-    public exponentialMovingAverage(values: Array<number>, range: number): Array<number> {
+    public ema(values: Array<number>, range: number): Array<number> {
         // prices come in with the most recent price in position 0
         // need to reverse array for calculation then re-reverse resulting array
         let reversedValues = values.reverse();
@@ -31,38 +40,56 @@ export class TechnicalAnalyzer {
     }
 
     //TO-DO: Documentation 
-    public relativeStrengthIndex(values: Array<number>) {
-        let averageGain = this.averageChange(values,true);
-        let averageLoss = this.averageChange(values,false);
+    // Method to return the rsi(Relative Strength Index) of a set of prices
+    public rsi(values: Array<number>, range: number) {
+        let averageGain = this.averageChange(values, range, true);
+        let averageLoss = this.averageChange(values, range, false);
 
-        if(averageLoss === 0){
+        if (averageLoss === 0) {
             return 100;
         }
 
-        let RSI: number = 100 - (100 / (1 + (averageGain/averageLoss)));
+        let RSI: number = 100 - (100 / (1 + (averageGain / averageLoss)));
 
         return RSI;
     }
 
-    private averageChange(values: Array<number>, gainsOrLosses: boolean) {
+    private averageChange(values: Array<number>, range: number, gainsOrLosses: boolean) {
         let reversedValues = values.reverse();
         let amount: number = 0;
 
-        for (let i = 1; i < values.length; i++) {
+        for (let i = 1; i < (range + 1); i++) {
             let change: number = reversedValues[i] - reversedValues[i - 1];
             if (gainsOrLosses) {
                 if (change > 0) {
                     amount += change;
                 }
             } else {
-                if(change<0){
+                if (change < 0) {
                     amount += Math.abs(change);
                 }
             }
 
         }
 
-        return amount / values.length;
+        return amount / range;
+
+    }
+
+    public macd(values: Array<number>, range) {
+        let macds: Array<number> = [];
+        for (let i = 0; i < range; i++) {
+            macds.push(this.ema(values, 12)[i] - this.ema(values, 26)[i]);
+        }
+        return macds;
+    }
+
+    public macdSignal(macdValues: Array<number>) {
+        return this.ema(macdValues, 9);
+    }
+
+    public srsi(values: Array<number>, period: number) {
+        // stoch rsi = (rsi - lowestrsi)/(highestrsi - lowestrsi)
 
     }
 

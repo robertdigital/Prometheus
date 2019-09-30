@@ -13,6 +13,9 @@ let executor: Executor | null = null;
 const handler: Handler = (event: any, context: Context, callback: Callback) => {
     context.callbackWaitsForEmptyEventLoop = false;
 
+    console.log("EVENT: ",event);
+    console.log("CONTEXT:",context);
+
     if (!apiController) {
         apiController = new APIController();
     }
@@ -49,7 +52,7 @@ const handler: Handler = (event: any, context: Context, callback: Callback) => {
             if (!executor) {
                 executor = new Executor();
             }
-            return executor.executeOrder();
+            return executor.executeDecision();
         })
         .then((res) => {
             callback(null, "True or false :: Sam is the coolest man in the world : " + res);
