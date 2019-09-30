@@ -15,15 +15,15 @@ export class TechnicalAnalyzer {
      * @returns {Array<number>} array of exponential moving averages
      * @memberof TechnicalAnalyzer
      */
-    public exponentialMovingAverage(prices: Array<number>, range: number): Array<number> {
+    public exponentialMovingAverage(values: Array<number>, range: number): Array<number> {
         // prices come in with the most recent price in position 0
         // need to reverse array for calculation then re-reverse resulting array
-        let reversedPrices = prices.reverse();
+        let reversedValues = values.reverse();
         let k = 2 / (range + 1);
-        let emaArray = [reversedPrices[0]];
+        let emaArray = [reversedValues[0]];
 
-        for (let i = 1; i < prices.length; i++) {
-            emaArray.push(prices[i] * k + emaArray[i - 1] * (1 - k));
+        for (let i = 1; i < values.length; i++) {
+            emaArray.push(values[i] * k + emaArray[i - 1] * (1 - k));
         }
 
         emaArray = emaArray.reverse();
@@ -31,9 +31,9 @@ export class TechnicalAnalyzer {
     }
 
     //TO-DO: Documentation 
-    public relativeStrengthIndex(prices: Array<number>) {
-        let averageGain = this.averageChange(prices,true);
-        let averageLoss = this.averageChange(prices,false);
+    public relativeStrengthIndex(values: Array<number>) {
+        let averageGain = this.averageChange(values,true);
+        let averageLoss = this.averageChange(values,false);
 
         if(averageLoss === 0){
             return 100;
@@ -44,12 +44,12 @@ export class TechnicalAnalyzer {
         return RSI;
     }
 
-    private averageChange(prices: Array<number>, gainsOrLosses: boolean) {
-        let reversedPrices = prices.reverse();
+    private averageChange(values: Array<number>, gainsOrLosses: boolean) {
+        let reversedValues = values.reverse();
         let amount: number = 0;
 
-        for (let i = 1; i < prices.length; i++) {
-            let change: number = reversedPrices[i] - reversedPrices[i - 1];
+        for (let i = 1; i < values.length; i++) {
+            let change: number = reversedValues[i] - reversedValues[i - 1];
             if (gainsOrLosses) {
                 if (change > 0) {
                     amount += change;
@@ -62,7 +62,7 @@ export class TechnicalAnalyzer {
 
         }
 
-        return amount / prices.length;
+        return amount / values.length;
 
     }
 
