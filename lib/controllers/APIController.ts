@@ -28,4 +28,8 @@ export class APIController {
         return coinbaseProClient.getProductHistoricRates(currency,{start:periodDate.toISOString(),end:currentDate.toISOString(),granularity:86400});
     }
 
+    public getOrderBook(currency:string){
+
+    }
+
 }
