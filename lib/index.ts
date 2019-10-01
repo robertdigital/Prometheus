@@ -13,7 +13,14 @@ let executor: Executor | null = null;
 const handler: Handler = (event: any, context: Context, callback: Callback) => {
     context.callbackWaitsForEmptyEventLoop = false;
     let date: Date = new Date(event.time);
-    let midDay:number;
+    console.log(date.getHours());
+    console.log(date.getMinutes());
+    if(date.getHours()){
+        console.log(date.getHours()==1);
+    }
+    let timeMark:number = date.getHours() != 0 ? date.getHours()*2 : 48;
+    timeMark = date.getMinutes()== 0 ? timeMark - 1 : timeMark;
+    console.log(timeMark);
     if (!apiController) {
         apiController = new APIController();
     }
@@ -33,8 +40,8 @@ const handler: Handler = (event: any, context: Context, callback: Callback) => {
     Promise.all([dbController.connectToDatabase(), apiController.getBuyPrice()])
         .then((dbAndPrice: Array<any>) => {
             //Preliminary info needed 
-            return dbController.savePriceData(dbAndPrice[0], new PriceDataModel(parseFloat(dbAndPrice[1].data.amount),midDay)).then((price) => {
-                return dbController.getHistoricalData(dbAndPrice[0],250,'day');
+            return dbController.savePriceData(dbAndPrice[0], new PriceDataModel(parseFloat(dbAndPrice[1].data.amount),timeMark)).then((price) => {
+                return dbController.getHistoricalData(dbAndPrice[0],250);
             })
         })
         .then((historicalData: Array<number>) => {

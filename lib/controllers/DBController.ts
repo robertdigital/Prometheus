@@ -32,21 +32,25 @@ export class DBController {
         });
     }
 
-    public async getHistoricalData(db: Db, range: number, rangeUnits: String = "period"):Promise<Array<number>> {
-        let arg;
-        if (rangeUnits == "period") {
-            arg = {}
-        } else if (rangeUnits == "day") {
-            arg = { dayMark: 1 }
-        } else {
-            return [];
+    /**
+     * Gets historical data stored in db.
+     *
+     * @param {Db} db
+     * @param {number} range
+     * @param {number} [timeMarker]
+     * @returns {Promise<Array<number>>}
+     * @memberof DBController
+     */
+    public async getHistoricalData(db: Db, range: number, timeMarker?: number):Promise<Array<number>> {
+        let findArgs = {};
+        if (timeMarker) {
+            findArgs = { timeMark: 1 };
         }
-        let x = await db.collection(PRICE_COLLECTION).find(arg).sort({ $natural: -1 }).limit(range).toArray();
+        let x = await db.collection(PRICE_COLLECTION).find(findArgs).sort({ $natural: -1 }).limit(range).toArray();
         let priceArray: Array<number> = [];
         x.forEach((document: PriceDataModel) => {
             priceArray.push(document.price);
         });
-        console.log(priceArray);
         return priceArray;
     }
 }
