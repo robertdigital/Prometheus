@@ -16,7 +16,7 @@ export class TechnicalAnalyzer {
         return amount / range
     }
     /**
-     * Gets the Exponential moving average of a set of values
+     * Gets the exponential moving average of a set of values
      * 
      *
      * @param {Array<number>} prices array of prices from most recent to least recent
@@ -53,7 +53,7 @@ export class TechnicalAnalyzer {
      * @returns
      * @memberof TechnicalAnalyzer
      */
-    public historicEMA({ values, range, base = 4 }: { values: Array<Array<number>>; range: number; base?: number; }){
+    public historicEMA({ values, range, base = 4 }: { values: Array<Array<number>>; range: number; base?: number; }):Array<number>{
         
         let slimmedArray: Array<number> = [];
         for(let i = 0; i<values.length;i++){
@@ -64,7 +64,7 @@ export class TechnicalAnalyzer {
 
     //TO-DO: Documentation 
     // Method to return the rsi(Relative Strength Index) of a set of prices
-    public rsi(values: Array<number>, range: number) {
+    public rsi(values: Array<number>, range: number):number {
         let averageGain = this.averageChange(values, range, true);
         let averageLoss = this.averageChange(values, range, false);
 
@@ -77,7 +77,7 @@ export class TechnicalAnalyzer {
         return RSI;
     }
 
-    private averageChange(values: Array<number>, range: number, gainsOrLosses: boolean) {
+    private averageChange(values: Array<number>, range: number, gainsOrLosses: boolean):number {
         let reversedValues = values.reverse();
         let amount: number = 0;
 
@@ -99,7 +99,7 @@ export class TechnicalAnalyzer {
 
     }
 
-    public macd(values: Array<number>, range) {
+    public macd(values: Array<number>, range):Array<number> {
         let macds: Array<number> = [];
         for (let i = 0; i < range; i++) {
             macds.push(this.ema(values, 12)[i] - this.ema(values, 26)[i]);
@@ -107,13 +107,33 @@ export class TechnicalAnalyzer {
         return macds;
     }
 
-    public macdSignal(macdValues: Array<number>) {
+    public macdSignal(macdValues: Array<number>):Array<number> {
         return this.ema(macdValues, 9);
     }
 
-    public srsi(values: Array<number>, period: number) {
+    /**
+     * Gets the stochastic relative strength index of a set of values over a period.
+     * 
+     * ref: https://www.investopedia.com/terms/s/stochrsi.asp
+     *
+     * @param {Array<number>} values
+     * @param {number} period
+     * @returns
+     * @memberof TechnicalAnalyzer
+     */
+    public srsi(values: Array<number>, period: number): number {
         // stoch rsi = (rsi - lowestrsi)/(highestrsi - lowestrsi)
-
+        //find rsi for each day of the array for the required period
+        if(values.length<(period*2)){
+            return;
+        }
+        let rsiList:Array<number> = [];
+        for(let i = 0; i<period; i++){
+            rsiList.push(this.rsi(values.slice(i,period+i),period));
+        }
+        let high = Math.max(...rsiList);
+        let low = Math.min(...rsiList);
+        return ((rsiList[0]-low)/(high-low));
     }
 
 
