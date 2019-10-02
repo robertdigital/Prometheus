@@ -1,4 +1,5 @@
 import { TechnicalAnalyzer } from "../utilities/TAUtils";
+import { ProductTicker } from "coinbase-pro";
 
 export class Evaluator {
 
@@ -15,15 +16,13 @@ export class Evaluator {
      * @returns
      * @memberof Evaluator
      */
-    public async evaluatePrice(historicalData: any) {
-
-        console.log(historicalData[0]);
-        let ema10 = this.ta.ema(historicalData, 10);
-        let ema20 = this.ta.ema(historicalData, 20);
-        let ema50 = this.ta.ema(historicalData, 50);
+    public async evaluatePrice(ticker: ProductTicker, orderBook: Array<any>, historicalData: Array<Array<number>>) {
+        // console.log("hello")
+        let ema10 = this.ta.historicEMA({ values: historicalData, range: 10 });
+        let ema20 = this.ta.historicEMA({ values: historicalData, range: 20 });
+        let ema50 = this.ta.historicEMA({ values: historicalData, range: 50 });
         console.log("ema10: " + ema10[0] + " || ema20: " + ema20[0] + " || ema50: " + ema50[0]);
         return true;
-
     }
 
 }
