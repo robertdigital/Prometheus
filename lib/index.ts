@@ -1,9 +1,9 @@
 import { Handler, Context, Callback } from "aws-lambda";
 import { DBController } from "./controllers/DBController";
-import { PriceDataModel } from "./models/DatabaseModels";
 import { Evaluator } from './workers/Evaluator';
 import { APIController } from "./controllers/APIController";
 import { Executor } from "./workers/Executor";
+import { ProductTicker } from "coinbase-pro";
 
 let dbController: DBController | null = null;
 let apiController: APIController | null = null;
@@ -12,7 +12,7 @@ let executor: Executor | null = null;
 
 const handler: Handler = (event: any, context: Context, callback: Callback) => {
     context.callbackWaitsForEmptyEventLoop = false;
-    
+
     if (!apiController) {
         apiController = new APIController();
     }
@@ -20,10 +20,15 @@ const handler: Handler = (event: any, context: Context, callback: Callback) => {
         dbController = new DBController();
     }
 
-    apiController.getHistoricRatesByDay(10,'BTC-USD').then((res)=>{
-        console.log("the data",res);
-        callback(null,"done");
-    });
+    let currency = "BTC-USD";
+    Promise.all([apiController.getTicker(currency),apiController.getOrderBook(currency),apiController.getHistoricRatesByDay(100,currency)]).then((res:any[])=>{
+        if(!evaluator){
+            evaluator = new Evaluator();
+        }
+        return evaluator.evaluatePrice(res[0],res[1],res[2]);
+    }).catch((e)=>{
+        callback(e);
+    })
 
 }
 
