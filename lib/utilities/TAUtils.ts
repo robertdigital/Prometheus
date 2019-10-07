@@ -27,12 +27,12 @@ export class TechnicalAnalyzer {
     public ema(values: Array<number>, range: number): Array<number> {
         // prices come in with the most recent price in position 0
         // need to reverse array for calculation then re-reverse resulting array
-        let reversedValues = values.slice(0,range).reverse();
+        let reversedValues = values.reverse();
         let k = 2 / (range + 1);
-        let emaArray = [reversedValues[0]];
+        let emaArray = [this.sma(reversedValues,range)];
 
-        for (let i = 1; i < range; i++) {
-            emaArray.push(reversedValues[i] * k + emaArray[i - 1] * (1 - k));
+        for (let i = range+1; i < values.length; i++) {
+            emaArray.push(reversedValues[i] * k + emaArray[i-range - 1] * (1 - k));
         }
 
         emaArray = emaArray.reverse();
@@ -164,6 +164,14 @@ export class TechnicalAnalyzer {
         }
 
         return retLevels;
+    }
+
+    public slimHistory(history: Array<Array<number>>,base:number){
+        let slimmedArray: Array<number> = [];
+        for (let i = 0; i < history.length; i++) {
+            slimmedArray.push(history[i][base]);
+        }
+        return slimmedArray;
     }
 
 
