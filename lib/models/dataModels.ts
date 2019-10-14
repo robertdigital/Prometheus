@@ -2,24 +2,27 @@ export class Evaluation {
     public date: Date;
     public macdStatus: MACDStatus;
     public macdCrossoverSignal: boolean;
-    constructor(macD: Array<number>, signal: Array<number>, lastEval?: Evaluation){
+    constructor(macD:number, signal: number, lastEval?: Evaluation){
         
         this.macdStatus = lastEval ? new MACDStatus(macD,signal,lastEval.macdStatus) : new MACDStatus(macD,signal);
-        this.macdCrossoverSignal = lastEval? (lastEval.macdStatus.macdGTSignal != (macD[0]>signal[0])) : false;
+        this.macdCrossoverSignal = lastEval? (lastEval.macdStatus.macdGTSignal != (macD>signal)) : false;
 
         this.date = new Date();
     }
 }
 
 export class MACDStatus {
-    public lastMacDs: Array<number>;
-    public lastSignals: Array<number>;
+    public currentMacd: number;
+    public currentSignal: number;
+    public lastMacd: number;
+    public lastSignal: number;
     public macdGTSignal: boolean;
     public converging: boolean;
-    constructor(macD: Array<number>, signal: Array<number>, lastIndDrirecton?: MACDStatus) {
-        if (lastIndDrirecton) {
-            if (lastIndDrirecton.lastMacDs) {
-                if (Math.abs(macD[0] - signal[0]) < Math.abs(lastIndDrirecton.lastMacDs[0] - lastIndDrirecton.lastSignals[0])) {
+    constructor(macD: number, signal: number, lastMACDStatus?: MACDStatus) {
+
+        if (lastMACDStatus) {
+            if (lastMACDStatus.lastMacd) {
+                if (Math.abs(macD - signal) < Math.abs(lastMACDStatus.currentMacd - lastMACDStatus.currentSignal)) {
                     //the distance between the macD and signal is shrinking
                     this.converging = true;
                 } else {
@@ -27,8 +30,10 @@ export class MACDStatus {
                 }
             }
         }
-        this.lastMacDs = macD;
-        this.lastSignals = signal;
-        this.macdGTSignal = macD[0] > signal[0];
+        this.currentMacd = macD;
+        this.currentSignal = signal;
+        this.lastMacd = lastMACDStatus.currentMacd;
+        this.lastSignal = lastMACDStatus.currentSignal;
+        this.macdGTSignal = macD > signal;
     }
 }
