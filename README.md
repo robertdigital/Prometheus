@@ -16,3 +16,5 @@ Will first implement an evaluator, which will produce a buy or a sell rating bas
 
 Note:
 To anyone reading, this is my first trading bot and is intended to be a learning process both for bot-making and algorithm trading. I do not have any guarantees attached to the performance of this bot, and any trading done through the use of this bot is done at the user's own risk. - Alan Sato (September 2019)
+
+Contact me @ [sam.alan.sato@gmail.com] if you would like to be working on this bot, would like to make any suggestions, have any questions or are just interested in the project in general.
