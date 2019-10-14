@@ -31,10 +31,12 @@ export class Evaluator {
         console.log("MACD = EMA(12) - EMA(26) = ", ema12-ema26);
 
         let macd = ta.macd(historicalData,20);
-        let macdSignal = ta.macdSignal(macd)[0];
-        console.log("MACD using formula: ",macd[0]);
+        let macdSignal = ta.macdSignal(macd);
+        console.log("MACD using formula : ",macd[0]);
+        console.log("MACD full range : ",macd);
         console.log("MACD Signal : ",macdSignal);
-        return new Evaluation(price,macd[0],macdSignal,lastEval);
+        console.log("MACD Signal full range : ",macdSignal[0])
+        return new Evaluation(price,macd[0],macdSignal[0],lastEval);
     }
 
 }
