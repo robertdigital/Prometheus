@@ -2,9 +2,10 @@ import { TechnicalAnalyzer } from "../utilities/TAUtils";
 import { ProductTicker } from "coinbase-pro";
 import { MACDStatus, Evaluation } from "../models/dataModels";
 
-export class Evaluator {
 
-    private ta = new TechnicalAnalyzer();
+let ta:TechnicalAnalyzer = new TechnicalAnalyzer();
+
+export class Evaluator {
 
     /**
      * Main method of the evaluator. 
@@ -17,22 +18,17 @@ export class Evaluator {
      * @returns
      * @memberof Evaluator
      */
-    public async evaluatePrice(ticker: ProductTicker, orderBook: Array<any>, historicalData: Array<Array<number>>,lastEval:Evaluation) {
-        // console.log("hello")
-        let ema10 = this.ta.historicEMA({ values: historicalData, range: 10 });
-        let ema20 = this.ta.historicEMA({ values: historicalData, range: 20 });
-        let ema50 = this.ta.historicEMA({ values: historicalData, range: 50 });
-        console.log("ema10: " + ema10[0] + " || ema20: " + ema20[0] + " || ema50: " + ema50[0]);
-
-        let macd = this.ta.macd(historicalData,9);
-        let signalLine = this.ta.macdSignal(macd);
-        console.log("lastEval",lastEval);
-        console.log("macDs",macd);
-        console.log("CurrentMacD",macd[0])
-        console.log("signalline",signalLine);
-        console.log("CurrentSignal",signalLine[0])
-        let evaluation = new Evaluation(macd,signalLine,lastEval);
-        return evaluation;
+    public async evaluatePrice(ticker: ProductTicker, orderBook: Array<any>, historicalData: Array<Array<number>>) {
+        console.log("Evaluating Price Data");
+        console.log("Ticker : ", ticker.price);
+        console.log("SMA(50) : ", ta.sma(ta.slimHistory(historicalData,4),50));
+        console.log("SMA(20) : ", ta.sma(ta.slimHistory(historicalData,4),20));
+        console.log("EMA(12) : ", ta.ema(ta.slimHistory(historicalData,4),12)[0]);
+        console.log("EMA(26) : ", ta.ema(ta.slimHistory(historicalData,4),26)[0]);
+        let macd = ta.macd(historicalData,20);
+        console.log("MACD : ",macd[0]);
+        console.log("MACD Signal : ",ta.macdSignal(macd)[0]);
+        return true;
     }
 
 }
