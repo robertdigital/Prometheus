@@ -55,11 +55,8 @@ export class TechnicalAnalyzer {
      */
     public historicEMA({ values, range, base = 4 }: { values: Array<Array<number>>; range: number; base?: number; }): Array<number> {
 
-        let slimmedArray: Array<number> = [];
-        for (let i = 0; i < values.length; i++) {
-            slimmedArray.push(values[i][base]);
-        }
-        return this.ema(slimmedArray, range);
+        
+        return this.ema(this.slimHistory(values,4), range);
     }
 
     //TO-DO: Documentation 

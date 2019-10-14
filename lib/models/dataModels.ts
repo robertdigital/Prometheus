@@ -1,8 +1,11 @@
 export class Evaluation {
     public date: Date;
+    public price: number;
     public macdStatus: MACDStatus;
     public macdCrossoverSignal: boolean;
-    constructor(macD: number, signal: number, lastEval?: Evaluation) {
+    constructor(currentPrice: number, macD: number, signal: number, lastEval?: Evaluation) {
+
+        this.price = currentPrice;
 
         this.macdStatus = lastEval ? new MACDStatus(macD, signal, lastEval.macdStatus) : new MACDStatus(macD, signal);
         this.macdCrossoverSignal = lastEval ? (lastEval.macdStatus.macdGTSignal != (macD > signal)) : false;
