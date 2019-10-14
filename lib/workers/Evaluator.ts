@@ -1,6 +1,6 @@
 import { TechnicalAnalyzer } from "../utilities/TAUtils";
 import { ProductTicker } from "coinbase-pro";
-import { MACDStatus, Evaluation } from "../models/DatabaseModels";
+import { MACDStatus, Evaluation } from "../models/dataModels";
 
 export class Evaluator {
 
