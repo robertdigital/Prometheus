@@ -27,12 +27,12 @@ export class TechnicalAnalyzer {
     public ema(values: Array<number>, range: number): Array<number> {
         // prices come in with the most recent price in position 0
         // need to reverse array for calculation then re-reverse resulting array
-        let reversedValues = values.reverse();
+        let reversedValues = values.slice(0,range).reverse();
         let k = 2 / (range + 1);
         let emaArray = [reversedValues[0]];
 
-        for (let i = 1; i < values.length; i++) {
-            emaArray.push(values[i] * k + emaArray[i - 1] * (1 - k));
+        for (let i = 1; i < range; i++) {
+            emaArray.push(reversedValues[i] * k + emaArray[i - 1] * (1 - k));
         }
 
         emaArray = emaArray.reverse();
@@ -99,10 +99,10 @@ export class TechnicalAnalyzer {
 
     }
 
-    public macd(values: Array<number>, range): Array<number> {
+    public macd(values: Array<Array<number>>, range): Array<number> {
         let macds: Array<number> = [];
         for (let i = 0; i < range; i++) {
-            macds.push(this.ema(values, 12)[i] - this.ema(values, 26)[i]);
+            macds.push(this.historicEMA({values:values, range: 12})[i] - this.historicEMA({values:values, range: 26})[i]);
         }
         return macds;
     }
