@@ -54,8 +54,6 @@ export class TechnicalAnalyzer {
      * @memberof TechnicalAnalyzer
      */
     public historicEMA({ values, range, base = 4 }: { values: Array<Array<number>>; range: number; base?: number; }): Array<number> {
-
-        
         return this.ema(this.slimHistory(values,4), range);
     }
 
@@ -98,10 +96,12 @@ export class TechnicalAnalyzer {
 
     public macd(values: Array<Array<number>>, range): Array<number> {
         let macds: Array<number> = [];
+        let ema12: Array<number> = this.historicEMA({values:values, range: 12});
+        let ema26: Array<number> = this.historicEMA({values:values, range: 26});
         for (let i = 0; i < range; i++) {
-            macds.push(this.historicEMA({values:values, range: 12})[i] - this.historicEMA({values:values, range: 26})[i]);
+            macds.push(ema12[i] - ema26[i]);
         }
-        return macds;
+        return macds.reverse();
     }
 
     public macdSignal(macdValues: Array<number>): Array<number> {
