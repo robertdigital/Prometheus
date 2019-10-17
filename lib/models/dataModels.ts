@@ -3,12 +3,14 @@ export class Evaluation {
     public price: number;
     public macdStatus: MACDStatus;
     public macdCrossoverSignal: boolean;
-    constructor(currentPrice: number, macD: number, signal: number, lastEval?: Evaluation) {
+    public rsiStatus: RSIStatus;
+    constructor(currentPrice: number, macD: number, signal: number,  rsi: number, lastEval?: Evaluation) {
 
         this.price = currentPrice;
 
-        this.macdStatus = lastEval ? new MACDStatus(macD, signal, lastEval.macdStatus) : new MACDStatus(macD, signal);
-        this.macdCrossoverSignal = lastEval ? (lastEval.macdStatus.macdGTSignal != (macD > signal)) : false;
+        this.macdStatus = lastEval && lastEval.macdStatus ? new MACDStatus(macD, signal, lastEval.macdStatus) : new MACDStatus(macD, signal);
+        this.macdCrossoverSignal = lastEval && lastEval.macdStatus.macdGTSignal ? (lastEval.macdStatus.macdGTSignal != (macD > signal)) : false;
+        this.rsiStatus = lastEval && lastEval.rsiStatus ? new RSIStatus(rsi,lastEval.rsiStatus) : new RSIStatus(rsi);
 
         this.date = new Date();
     }
@@ -38,5 +40,20 @@ export class MACDStatus {
         this.currentMacd = macD;
         this.currentSignal = signal;
         this.macdGTSignal = macD > signal;
+    }
+}
+
+export class RSIStatus {
+    public currentRSI: number;
+    public currentActionSignal: string;
+    public lastRSI : number;
+    public lastActionSignal : string;
+    constructor(rsi:number,LastRSIStatus?:RSIStatus){
+        if(LastRSIStatus){
+            if(LastRSIStatus.currentRSI && LastRSIStatus.currentActionSignal){
+                this.lastRSI = LastRSIStatus.currentRSI;
+            }
+        }
+        this.currentRSI = rsi;
     }
 }
