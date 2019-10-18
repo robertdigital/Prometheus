@@ -27,15 +27,14 @@ export class TechnicalAnalyzer {
     public ema(values: Array<number>, range: number): Array<number> {
         // prices come in with the most recent price in position 0
         // need to reverse array for calculation then re-reverse resulting array
-        let reversedValues = values.reverse();
+        let reversedValues = values.slice(0);
+        reversedValues.reverse();
         let k = 2 / (range + 1);
         let emaArray = [this.sma(reversedValues,range)];
-
-        for (let i = range+1; i < values.length; i++) {
-            emaArray.push(reversedValues[i] * k + emaArray[i-range - 1] * (1 - k));
+        for (let i = 1; i < reversedValues.length; i++) {
+            emaArray.push(reversedValues[i] * k + emaArray[i- 1] * (1 - k));
         }
-
-        emaArray = emaArray.reverse();
+        emaArray.reverse();
         return emaArray;
     }
 
@@ -73,7 +72,8 @@ export class TechnicalAnalyzer {
     }
 
     private averageChange(values: Array<number>, range: number, gainsOrLosses: boolean): number {
-        let reversedValues = values.reverse();
+        let reversedValues = values.slice(0);
+        reversedValues.reverse();
         let amount: number = 0;
 
         for (let i = 1; i < (range + 1); i++) {
@@ -101,7 +101,7 @@ export class TechnicalAnalyzer {
         for (let i = 0; i < range; i++) {
             macds.push(ema12[i] - ema26[i]);
         }
-        return macds.reverse();
+        return macds;
     }
 
     public macdSignal(macdValues: Array<number>): Array<number> {
