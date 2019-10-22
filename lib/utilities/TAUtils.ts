@@ -27,15 +27,14 @@ export class TechnicalAnalyzer {
     public ema(values: Array<number>, range: number): Array<number> {
         // prices come in with the most recent price in position 0
         // need to reverse array for calculation then re-reverse resulting array
-        let reversedValues = values.reverse();
+        let reversedValues = values.slice(0);
+        reversedValues.reverse();
         let k = 2 / (range + 1);
         let emaArray = [this.sma(reversedValues,range)];
-
-        for (let i = range+1; i < values.length; i++) {
-            emaArray.push(reversedValues[i] * k + emaArray[i-range - 1] * (1 - k));
+        for (let i = 1; i < reversedValues.length; i++) {
+            emaArray.push(reversedValues[i] * k + emaArray[i- 1] * (1 - k));
         }
-
-        emaArray = emaArray.reverse();
+        emaArray.reverse();
         return emaArray;
     }
 
@@ -54,12 +53,7 @@ export class TechnicalAnalyzer {
      * @memberof TechnicalAnalyzer
      */
     public historicEMA({ values, range, base = 4 }: { values: Array<Array<number>>; range: number; base?: number; }): Array<number> {
-
-        let slimmedArray: Array<number> = [];
-        for (let i = 0; i < values.length; i++) {
-            slimmedArray.push(values[i][base]);
-        }
-        return this.ema(slimmedArray, range);
+        return this.ema(this.slimHistory(values,4), range);
     }
 
     //TO-DO: Documentation 
@@ -78,7 +72,8 @@ export class TechnicalAnalyzer {
     }
 
     private averageChange(values: Array<number>, range: number, gainsOrLosses: boolean): number {
-        let reversedValues = values.reverse();
+        let reversedValues = values.slice(0);
+        reversedValues.reverse();
         let amount: number = 0;
 
         for (let i = 1; i < (range + 1); i++) {
@@ -101,8 +96,10 @@ export class TechnicalAnalyzer {
 
     public macd(values: Array<Array<number>>, range): Array<number> {
         let macds: Array<number> = [];
+        let ema12: Array<number> = this.historicEMA({values:values, range: 12});
+        let ema26: Array<number> = this.historicEMA({values:values, range: 26});
         for (let i = 0; i < range; i++) {
-            macds.push(this.historicEMA({values:values, range: 12})[i] - this.historicEMA({values:values, range: 26})[i]);
+            macds.push(ema12[i] - ema26[i]);
         }
         return macds;
     }
