@@ -17,13 +17,14 @@ export class DBController {
             console.info("***Creating new DB connection instance***")
             return MongoClient.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true }).then(Client => {
                 this.cachedDb = Client.db(DB_NAME);
+                console.info("Successfully established DB Connection");
                 return this.cachedDb;
             })
         }
     }
 
     public storeEvaluation(db: Db, data: any) {
-        return db.collection(PRICE_COLLECTION).insertOne(data).then(() => { return "great" }).catch(() => { return ":(" });
+        return db.collection(PRICE_COLLECTION).insertOne(data).then(() => { console.info("Evaluation stored successfully!"); return "success"; }).catch(() => { return "Fail"; });
     }
 
     public getLastEvaluation(db: Db) {
