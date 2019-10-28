@@ -1,13 +1,15 @@
 import { Handler, Context, Callback } from "aws-lambda";
-import { DBController } from "./controllers/DBController";
-import { Evaluator } from './workers/Evaluator';
-import { APIController } from "./controllers/APIController";
-import { ProductTicker } from "coinbase-pro";
 import { Db } from "mongodb";
+import { DBController } from "./controllers/DBController";
+import { APIController } from "./controllers/APIController";
+import { Evaluator } from './workers/Evaluator';
+import { Executor } from "./workers/Executor";
+import { Evaluation } from "./models/dataModels";
 
 let dbController: DBController | null = null;
 let apiController: APIController | null = null;
 let evaluator: Evaluator | null = null;
+let executor: Executor | null = null;
 
 const handler: Handler = (event: any, context: Context, callback: Callback) => {
     context.callbackWaitsForEmptyEventLoop = false;
@@ -20,16 +22,19 @@ const handler: Handler = (event: any, context: Context, callback: Callback) => {
     }
 
     let currency = "BTC-USD";
-    Promise.all([apiController.getTicker(currency),apiController.getOrderBook(currency),apiController.getHistoricRatesByDay(100,currency),dbController.connectToDatabase().then((db:Db)=>{ return dbController.getLastEvaluation(db)})]).then((res:any[])=>{
-        if(!evaluator){
+    Promise.all([apiController.getTicker(currency), apiController.getOrderBook(currency), apiController.getHistoricRatesByDay(100, currency), dbController.connectToDatabase().then((db: Db) => { return dbController.getLastEvaluation(db) })]).then((res: any[]) => {
+        if (!evaluator) {
             evaluator = new Evaluator();
         }
-        return evaluator.evaluatePrice(res[0],res[1],res[2],res[3][0]);
-    }).then((evaluation)=>{
-        return dbController.connectToDatabase().then((db:Db)=>{return dbController.storeEvaluation(db,evaluation)})
-    }).then((evaluation)=>{
-        return apiController.marketBuy("10").then((a)=>{callback(null,a);});
-    }).catch((e)=>{
+        return evaluator.evaluatePrice(res[0], res[1], res[2], res[3][0]);
+    }).then((evaluation: Evaluation) => {
+        if (!executor) {
+            executor = new Executor();
+        }
+        return executor.executeEval(dbController, evaluation);
+    }).then(()=>{
+        callback(null,"Complete");
+    }).catch((e) => {
         callback(e);
     })
 
