@@ -19,22 +19,22 @@ export class Evaluator {
      * @memberof Evaluator
      */
     public async evaluatePrice(ticker: ProductTicker, orderBook: Array<any>, historicalData: Array<Array<number>>, lastEval: Evaluation) {
-        console.log("Evaluating Price Data");
+        console.info("Evaluating Price Data");
         let price = parseFloat(ticker.price);
         let slimHistory = ta.slimHistory(historicalData, 4);
-        console.log("Ticker : ", price);
-        console.log("SMA(50) : ", ta.sma(slimHistory, 50));
-        console.log("SMA(20) : ", ta.sma(slimHistory, 20));
+        console.info("Ticker : ", price);
+        console.info("SMA(50) : ", ta.sma(slimHistory, 50));
+        console.info("SMA(20) : ", ta.sma(slimHistory, 20));
         let ema12 = ta.ema(ta.slimHistory(historicalData, 4), 12)[0];
         let ema26 = ta.ema(ta.slimHistory(historicalData, 4), 26)[0];
-        console.log("EMA(12) : ", ema12);
-        console.log("EMA(26) : ", ema26);
+        console.info("EMA(12) : ", ema12);
+        console.info("EMA(26) : ", ema26);
         let macd = ta.macd(historicalData, 20);
         let macdSignal = ta.macdSignal(macd);
-        console.log("MACD : ", macd[0]);
-        console.log("MACD Signal : ", macdSignal[0]);
+        console.info("MACD : ", macd[0]);
+        console.info("MACD Signal : ", macdSignal[0]);
         let rsi14 = ta.rsi(slimHistory, 14);
-        console.log("RSI(14) : ", rsi14);
+        console.info("RSI(14) : ", rsi14);
 
         let order:OrderParams = null;
 

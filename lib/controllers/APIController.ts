@@ -40,6 +40,7 @@ export class APIController {
 
     public executeOrder(evaluation: Evaluation) {
         let order = evaluation.order;
+        console.info("Executing order: ",order);
         coinbaseProClient.placeOrder(order);
     }
 

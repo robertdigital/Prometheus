@@ -8,8 +8,11 @@ export class Executor {
         return dbController.connectToDatabase().then((db: Db) => { return dbController.storeEvaluation(db, evaluation) }).then(
             (evaluation: Evaluation) => {
                 if (evaluation.order) {
+                    console.info("Order Request Confirmed")
                     let apiController: APIController = new APIController();
                     apiController.executeOrder(evaluation);
+                } else {
+                    console.info("No Order");
                 }
             });
     }
