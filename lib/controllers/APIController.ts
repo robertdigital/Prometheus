@@ -1,9 +1,11 @@
 import { AuthenticatedClient, ProductTicker } from "coinbase-pro"
+import { Evaluation } from "../models/dataModels";
 
-const API_KEY: string = process.env.API_KEY ? process.env.API_KEY : '';
-const API_SECRET: string = process.env.API_SECRET ? process.env.API_SECRET : '';
-const PASS: string = process.env.PASS_PHRASE ? process.env.PASS_PHRASE : '';
-const coinbaseProClient: AuthenticatedClient = new AuthenticatedClient(API_KEY, API_SECRET, PASS);
+const API_KEY: string = process.env.API_KEY ? process.env.API_KEY_TEST : '';
+const API_SECRET: string = process.env.API_SECRET ? process.env.API_SECRET_TEST : '';
+const PASS: string = process.env.PASS_PHRASE ? process.env.PASS_PHRASE_TEST : '';
+const API_URI: string = process.env.API_URI ? process.env.API_URI : '';
+const coinbaseProClient: AuthenticatedClient = new AuthenticatedClient(API_KEY, API_SECRET, PASS, API_URI);
 
 
 /**
@@ -36,5 +38,9 @@ export class APIController {
         return coinbaseProClient.getProductHistoricRates(currency, { start: periodDate.toISOString(), end: currentDate.toISOString(), granularity: 86400 });
     }
 
+    public executeOrder(evaluation: Evaluation) {
+        let order = evaluation.order;
+        coinbaseProClient.placeOrder(order);
+    }
 
 }
