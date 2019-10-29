@@ -1,5 +1,5 @@
 import { TechnicalAnalyzer } from "../utilities/TAUtils";
-import { ProductTicker } from "coinbase-pro";
+import { ProductTicker, OrderParams } from "coinbase-pro";
 import { MACDStatus, Evaluation } from "../models/dataModels";
 
 
@@ -35,7 +35,10 @@ export class Evaluator {
         console.log("MACD Signal : ", macdSignal[0]);
         let rsi14 = ta.rsi(slimHistory, 14);
         console.log("RSI(14) : ", rsi14);
-        return new Evaluation(price, macd[0], macdSignal[0], rsi14, lastEval);
+
+        let order:OrderParams = null;
+
+        return new Evaluation(price, macd[0], macdSignal[0], rsi14, order ,lastEval);
     }
 
 }

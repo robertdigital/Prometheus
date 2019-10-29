@@ -1,16 +1,21 @@
+import { OrderParams } from "coinbase-pro";
+
 export class Evaluation {
     public date: Date;
     public price: number;
     public macdStatus: MACDStatus;
     public macdCrossoverSignal: boolean;
     public rsiStatus: RSIStatus;
-    constructor(currentPrice: number, macD: number, signal: number,  rsi: number, lastEval?: Evaluation) {
+    public order: OrderParams | null;
+    constructor(currentPrice: number, macD: number, signal: number,  rsi: number, orderObj: OrderParams | null, lastEval?: Evaluation) {
 
         this.price = currentPrice;
 
         this.macdStatus = lastEval && lastEval.macdStatus ? new MACDStatus(macD, signal, lastEval.macdStatus) : new MACDStatus(macD, signal);
         this.macdCrossoverSignal = lastEval && lastEval.macdStatus.macdGTSignal ? (lastEval.macdStatus.macdGTSignal != (macD > signal)) : false;
         this.rsiStatus = lastEval && lastEval.rsiStatus ? new RSIStatus(rsi,lastEval.rsiStatus) : new RSIStatus(rsi);
+
+        this.order = orderObj ? orderObj : null;
 
         this.date = new Date();
     }
