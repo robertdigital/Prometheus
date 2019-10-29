@@ -3,62 +3,41 @@ import { OrderParams } from "coinbase-pro";
 export class Evaluation {
     public date: Date;
     public price: number;
-    public macdStatus: MACDStatus;
-    public macdCrossoverSignal: boolean;
-    public rsiStatus: RSIStatus;
+    public indicators: Indicators;
     public order: OrderParams | null;
-    constructor(currentPrice: number, macD: number, signal: number,  rsi: number, orderObj: OrderParams | null, lastEval?: Evaluation) {
 
-        this.price = currentPrice;
-
-        this.macdStatus = lastEval && lastEval.macdStatus ? new MACDStatus(macD, signal, lastEval.macdStatus) : new MACDStatus(macD, signal);
-        this.macdCrossoverSignal = lastEval && lastEval.macdStatus.macdGTSignal ? (lastEval.macdStatus.macdGTSignal != (macD > signal)) : false;
-        this.rsiStatus = lastEval && lastEval.rsiStatus ? new RSIStatus(rsi,lastEval.rsiStatus) : new RSIStatus(rsi);
-
-        this.order = orderObj ? orderObj : null;
-
+    constructor(){
         this.date = new Date();
     }
 }
 
-export class MACDStatus {
-    public currentMacd: number;
-    public currentSignal: number;
-    public lastMacd: number;
-    public lastSignal: number;
+export class Indicators {
+    public macd: number;
+    public macdSignal: number;
+    public prevMacd: number;
+    public prevMacdSignal: number;
     public macdGTSignal: boolean;
-    public converging: boolean;
-    constructor(macD: number, signal: number, lastMACDStatus?: MACDStatus) {
+    public convergingMacdSignal: boolean;
+    public macdCrossoverSignal: boolean;
 
-        if (lastMACDStatus) {
-            if (lastMACDStatus.currentMacd && lastMACDStatus.currentSignal) {
-                this.lastMacd = lastMACDStatus.currentMacd;
-                this.lastSignal = lastMACDStatus.currentSignal;
-                if (Math.abs(macD - signal) < Math.abs(lastMACDStatus.currentMacd - lastMACDStatus.currentSignal)) {
-                    //the distance between the macD and signal is shrinking
-                    this.converging = true;
-                } else {
-                    this.converging = false;
-                }
-            }
-        }
-        this.currentMacd = macD;
-        this.currentSignal = signal;
+    constructor(macD: number, signal: number, prevIndicators?: Indicators) {
+        this.macd = macD;
+        this.macdSignal = signal;
         this.macdGTSignal = macD > signal;
+
+        if (prevIndicators) {
+            if (prevIndicators.macd && prevIndicators.macdSignal) {
+                this.prevMacd = prevIndicators.macd;
+                this.prevMacdSignal = prevIndicators.macdSignal;
+                if (Math.abs(macD - signal) < Math.abs(prevIndicators.macd - prevIndicators.macdSignal)) {
+                    //the distance between the macD and signal is shrinking
+                    this.convergingMacdSignal = true;
+                } else {
+                    this.convergingMacdSignal = false;
+                }
+                this.macdCrossoverSignal = (prevIndicators.macdGTSignal != this.macdGTSignal) ? true : false;
+            }
+        }
     }
 }
 
-export class RSIStatus {
-    public currentRSI: number;
-    public currentActionSignal: string;
-    public lastRSI : number;
-    public lastActionSignal : string;
-    constructor(rsi:number,LastRSIStatus?:RSIStatus){
-        if(LastRSIStatus){
-            if(LastRSIStatus.currentRSI && LastRSIStatus.currentActionSignal){
-                this.lastRSI = LastRSIStatus.currentRSI;
-            }
-        }
-        this.currentRSI = rsi;
-    }
-}
