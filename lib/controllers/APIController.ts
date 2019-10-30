@@ -1,4 +1,4 @@
-import { AuthenticatedClient, ProductTicker } from "coinbase-pro"
+import { AuthenticatedClient, ProductTicker, OrderParams } from "coinbase-pro"
 import { Evaluation } from "../models/dataModels";
 
 const API_KEY: string = process.env.API_KEY ? process.env.API_KEY_TEST : '';
@@ -10,12 +10,20 @@ const coinbaseProClient: AuthenticatedClient = new AuthenticatedClient(API_KEY, 
 
 /**
  * Controller to access the Coinbase PRO API (https://docs.pro.coinbase.com/)
- * Contains methods to simplify the client requests.
+ * Contains methods to simplify the client requests and add logging.
+ * 
  * @export
  * @class APIController
  */
 export class APIController {
 
+    /**
+     * gets a ProductTicker object from the Coinbase Pro API which contains a security's current price
+     *
+     * @param {string} currency
+     * @returns {Promise<ProductTicker>}
+     * @memberof APIController
+     */
     public getTicker(currency: string): Promise<ProductTicker> {
         return coinbaseProClient.getProductTicker(currency);
     }
@@ -38,10 +46,15 @@ export class APIController {
         return coinbaseProClient.getProductHistoricRates(currency, { start: periodDate.toISOString(), end: currentDate.toISOString(), granularity: 86400 });
     }
 
-    public executeOrder(evaluation: Evaluation) {
-        let order = evaluation.order;
+    /**
+     * sends a order request to the Coinbase API
+     *
+     * @param {OrderParams} order an OrderParams object returned from the Evaluator inside the evaluation;
+     * @memberof APIController
+     */
+    public executeOrder(order: OrderParams) {
         console.info("Executing order: ",order);
-        coinbaseProClient.placeOrder(order);
+        return coinbaseProClient.placeOrder(order);
     }
 
 }

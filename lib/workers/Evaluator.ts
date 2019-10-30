@@ -1,5 +1,5 @@
 import { TechnicalAnalyzer } from "../utilities/TAUtils";
-import { ProductTicker, OrderParams } from "coinbase-pro";
+import { ProductTicker, OrderParams, MarketOrder } from "coinbase-pro";
 import { Evaluation, Indicators } from "../models/dataModels";
 
 
@@ -39,9 +39,28 @@ export class Evaluator {
 
         evaluation.indicators = (lastEval && lastEval.indicators) ? new Indicators(macd[0], macdSignal[0], lastEval.indicators) : new Indicators(macd[0], macdSignal[0]);
 
+        
+
         let order: OrderParams = null;
-
-
+        if (evaluation.indicators.macdCrossoverSignal) {
+            if (evaluation.indicators.macdGTSignal) {
+                order = {
+                    type: "market",
+                    side: "buy",
+                    funds: "10",
+                    product_id: "BTC-USD"
+                } as MarketOrder;
+            } else {
+                let tenDollarsInBTC: string = (10/evaluation.price).toString();
+                order = {
+                    type: "market",
+                    side: "sell",
+                    size: tenDollarsInBTC,
+                    product_id: "BTC-USD"
+                } as MarketOrder;
+            }
+        }
+        evaluation.order = order;
         return evaluation;
     }
 
