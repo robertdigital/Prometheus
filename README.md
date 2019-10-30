@@ -4,15 +4,18 @@ Node JS Crypto trading bot.
 - Intended to only use within the free-tier usage restrictions of AWS and MongoDB Atlas.
 - Designed with Coinbase API in mind. This decision may change in the future.
 
-Work in progress
+ ------- Updates ----------------------
 
-Issues will be updated soon with task items for min-viable product. 
+(10/30/2019) - Bot works using sandbox api. Trades based on MACD signal crossovers. Trades in $10 units.
 
-
-
-
-
-Will first implement an evaluator, which will produce a buy or a sell rating based on some factors. Will then implement an executor which will take the rating given by the evaluator and execute an order. 
+---------------------------------------
+-------- Goals ------------------------
+ 
+=> Documentation
+=> Implement advanced trading rules
+=> Trade in variable amounts
+ 
+---------------------------------------
 
 Note:
 To anyone reading, this is my first trading bot and is intended to be a learning process both for bot-making and algorithm trading. I do not have any guarantees attached to the performance of this bot, and any trading done through the use of this bot is done at the user's own risk. - Alan Sato (September 2019)
