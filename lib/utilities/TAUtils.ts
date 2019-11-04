@@ -38,24 +38,6 @@ export class TechnicalAnalyzer {
         return emaArray;
     }
 
-
-    /**
-     *
-     * Base parameter is an integer from 1-4 representing the different prices to base the EMA off of
-     * 1 - High,
-     * 2 - Low,
-     * 3 - Open,
-     * 4 - Close,
-     * DEFAULT - 4 (Close)
-     *
-     * @param {{ values: Array<Array<number>>; range: number; base?: number; }} { values, range, base =4 }
-     * @returns
-     * @memberof TechnicalAnalyzer
-     */
-    public historicEMA({ values, range, base = 4 }: { values: Array<Array<number>>; range: number; base?: number; }): Array<number> {
-        return this.ema(this.slimHistory(values,4), range);
-    }
-
     //TO-DO: Documentation 
     // Method to return the rsi(Relative Strength Index) of a set of prices
     public rsi(values: Array<number>, range: number): number {
@@ -94,10 +76,10 @@ export class TechnicalAnalyzer {
 
     }
 
-    public macd(values: Array<Array<number>>, range): Array<number> {
+    public macd(values: Array<number>, range): Array<number> {
         let macds: Array<number> = [];
-        let ema12: Array<number> = this.historicEMA({values:values, range: 12});
-        let ema26: Array<number> = this.historicEMA({values:values, range: 26});
+        let ema12: Array<number> = this.ema(values,12);
+        let ema26: Array<number> = this.ema(values,26); 
         for (let i = 0; i < range; i++) {
             macds.push(ema12[i] - ema26[i]);
         }
@@ -163,13 +145,7 @@ export class TechnicalAnalyzer {
         return retLevels;
     }
 
-    public slimHistory(history: Array<Array<number>>,base:number){
-        let slimmedArray: Array<number> = [];
-        for (let i = 0; i < history.length; i++) {
-            slimmedArray.push(history[i][base]);
-        }
-        return slimmedArray;
-    }
+    
 
 
 }

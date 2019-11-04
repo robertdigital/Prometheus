@@ -22,7 +22,7 @@ const handler: Handler = (event: any, context: Context, callback: Callback) => {
     }
 
     let currency = "BTC-USD";
-    Promise.all([apiController.getTicker(currency), apiController.getOrderBook(currency), apiController.getHistoricRatesByDay(100, currency), dbController.connectToDatabase().then((db: Db) => { return dbController.getLastEvaluation(db) })]).then((res: any[]) => {
+    Promise.all([apiController.getTicker(currency), apiController.getOrderBook(currency), apiController.getHistoricClosingRatesByDay(100, currency), dbController.connectToDatabase().then((db: Db) => { return dbController.getLastEvaluation(db) })]).then((res: any[]) => {
         if (!evaluator) {
             evaluator = new Evaluator();
         }

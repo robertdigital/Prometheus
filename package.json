@@ -1,12 +1,12 @@
 {
-  "name": "nodecrypto",
+  "name": "atila",
   "version": "1.0.0",
-  "description": "",
+  "description": "Typescript Algo-Trading Bot",
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Alan Sato",
   "license": "MIT",
   "dependencies": {
     "@types/aws-lambda": "^8.10.31",
