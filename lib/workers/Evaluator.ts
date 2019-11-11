@@ -56,7 +56,8 @@ export class Evaluator {
                     product_id: "BTC-USD"
                 } as MarketOrder;
             } else {
-                let tenDollarsInBTC: string = (10/evaluation.price).toString();
+                // MIN btc = 0.00000001
+                let tenDollarsInBTC: string = (10/evaluation.price).toFixed(8).toString();
                 order = {
                     type: "market",
                     side: "sell",
