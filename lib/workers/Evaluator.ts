@@ -24,7 +24,6 @@ export class Evaluator {
         evaluation.price = parseFloat(ticker.price);
         console.info("Ticker : ", evaluation.price);
         console.log("History: ",historicalData);
-        console.log("Slim History: ", historicalData);
         console.log("SMA 3: ", ta.sma(historicalData,3));
         console.info("SMA(50) : ", ta.sma(historicalData, 50));
         console.info("SMA(20) : ", ta.sma(historicalData, 20));

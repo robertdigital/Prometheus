@@ -43,7 +43,7 @@ export class APIController {
     public getHistoricClosingRatesByDay(range: number, currency: string): Promise<Array<number>> {
         let currentDate = new Date();
         let periodDate = new Date(new Date().setDate(currentDate.getDate() - range));
-        return coinbaseProClient.getProductHistoricRates(currency, { start: periodDate.toISOString(), end: currentDate.toISOString(), granularity: 86400 }).then((data: Array<Array<number>>) => { return this.slimCoinbaseHistory(data,4) });
+        return coinbaseProClient.getProductHistoricRates(currency, { start: periodDate.toISOString(), end: currentDate.toISOString(), granularity: 86400 }).then((data: Array<Array<number>>) => { console.log(data); return this.slimCoinbaseHistory(data, 4) });
     }
 
     /**
