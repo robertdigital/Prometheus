@@ -23,14 +23,14 @@ export class Evaluator {
         let evaluation = new Evaluation();
         evaluation.price = parseFloat(ticker.price);
         console.info("Ticker : ", evaluation.price);
-        console.log("History: ",historicalData);
-        console.log("SMA 3: ", ta.sma(historicalData,3));
+        console.log("History: ", historicalData);
+        console.log("SMA 3: ", ta.sma(historicalData, 3));
         console.info("SMA(50) : ", ta.sma(historicalData, 50));
         console.info("SMA(20) : ", ta.sma(historicalData, 20));
         let ema12 = ta.ema(historicalData, 12);
-        console.log("ema12 full :",ema12);
+        console.log("ema12 full :", ema12);
         let ema26 = ta.ema(historicalData, 26);
-        console.log("ema26 full :",ema26);
+        console.log("ema26 full :", ema26);
         console.info("EMA(12) : ", ema12[0]);
         console.info("EMA(26) : ", ema26[0]);
         let macd = ta.macd(historicalData, 20);
@@ -44,8 +44,6 @@ export class Evaluator {
 
         evaluation.indicators = (lastEval && lastEval.indicators) ? new Indicators(macd[0], macdSignal[0], lastEval.indicators) : new Indicators(macd[0], macdSignal[0]);
 
-        
-
         let order: OrderParams = null;
         if (evaluation.indicators.macdCrossoverSignal) {
             if (evaluation.indicators.macdGTSignal) {
@@ -57,7 +55,7 @@ export class Evaluator {
                 } as MarketOrder;
             } else {
                 // MIN btc = 0.00000001
-                let tenDollarsInBTC: string = (10/evaluation.price).toFixed(8).toString();
+                let tenDollarsInBTC: string = (10 / evaluation.price).toFixed(8).toString();
                 order = {
                     type: "market",
                     side: "sell",
