@@ -1,6 +1,6 @@
 import { TechnicalAnalyzer } from "../utilities/TAUtils";
 import { ProductTicker, OrderParams, MarketOrder, Account } from "coinbase-pro";
-import { Evaluation, Indicators } from "../models/dataModels";
+import { Evaluation, Indicators, AccountState } from "../models/dataModels";
 
 
 let ta: TechnicalAnalyzer = new TechnicalAnalyzer();
@@ -21,26 +21,19 @@ export class Evaluator {
     public async evaluateConditions(ticker: ProductTicker, accounts: Array<Account>, orderBook: Array<any>, historicalData: Array<number>, lastEval?: Evaluation) {
         console.info("--- Evaluating Present Conditions ---")
         let evaluation = new Evaluation();
-        console.info("-- Evaluating Account Info --");
-        console.info("Accounts : ",accounts);
+        evaluation.accountState = new AccountState(this.accountValue(accounts,ticker),accounts);
         evaluation.price = parseFloat(ticker.price);
         console.info("Ticker : ", evaluation.price);
-        console.log("History: ", historicalData);
-        console.log("SMA 3: ", ta.sma(historicalData, 3));
         console.info("SMA(50) : ", ta.sma(historicalData, 50));
         console.info("SMA(20) : ", ta.sma(historicalData, 20));
         let ema12 = ta.ema(historicalData, 12);
-        console.log("ema12 full :", ema12);
         let ema26 = ta.ema(historicalData, 26);
-        console.log("ema26 full :", ema26);
         console.info("EMA(12) : ", ema12[0]);
         console.info("EMA(26) : ", ema26[0]);
         let macd = ta.macd(historicalData, 20);
         let macdSignal = ta.macdSignal(macd);
         console.info("MACD : ", macd[0]);
         console.info("MACD Signal : ", macdSignal[0]);
-        console.info("All MACDs : ", macd);
-        console.info("All MACD Signlas : ", macdSignal);
         let rsi14 = ta.rsi(historicalData, 14);
         console.info("RSI(14) : ", rsi14);
 
@@ -68,6 +61,26 @@ export class Evaluator {
         }
         evaluation.order = order;
         return evaluation;
+    }
+
+    private accountValue(acnts: Array<Account>,tick:ProductTicker){
+        console.info("-- Evaluating Account Info --");
+        console.info("Accounts : ", acnts);
+        let accountValue: number;
+        for (let account of acnts) {
+            if (account.currency == "BTC") {
+                console.info("Account (" + account.currency + ") :");
+                console.info("balance - " + account.balance + "(" + account.currency + ")");
+                accountValue += (parseFloat(account.balance) * parseFloat(tick.price));
+                console.info("balance in usd - " + (parseFloat(account.balance) * parseFloat(tick.price)))
+            } else if (account.currency == "USD") {
+                console.info("Account (USD)");
+                accountValue += parseFloat(account.balance)
+                console.info("balance - " + account.balance + "(" + account.currency + ")");
+            }
+        }
+        console.info("Total Account Value USD : " + accountValue);
+        return accountValue;
     }
 
 }
