@@ -79,4 +79,9 @@ export class APIController {
         return slimmedArray;
     }
 
+
+    public getAccounts(){
+        return coinbaseProClient.getAccounts();
+    }
+
 }

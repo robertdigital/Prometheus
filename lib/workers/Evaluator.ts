@@ -1,5 +1,5 @@
 import { TechnicalAnalyzer } from "../utilities/TAUtils";
-import { ProductTicker, OrderParams, MarketOrder } from "coinbase-pro";
+import { ProductTicker, OrderParams, MarketOrder, Account } from "coinbase-pro";
 import { Evaluation, Indicators } from "../models/dataModels";
 
 
@@ -18,9 +18,11 @@ export class Evaluator {
      * @returns
      * @memberof Evaluator
      */
-    public async evaluatePrice(ticker: ProductTicker, orderBook: Array<any>, historicalData: Array<number>, lastEval?: Evaluation) {
-        console.info("Evaluating Price Data");
+    public async evaluateConditions(ticker: ProductTicker, accounts: Array<Account>, orderBook: Array<any>, historicalData: Array<number>, lastEval?: Evaluation) {
+        console.info("--- Evaluating Present Conditions ---")
         let evaluation = new Evaluation();
+        console.info("-- Evaluating Account Info --");
+        console.info("Accounts : ",accounts);
         evaluation.price = parseFloat(ticker.price);
         console.info("Ticker : ", evaluation.price);
         console.log("History: ", historicalData);
