@@ -50,7 +50,7 @@ export class Evaluator {
                 } as MarketOrder;
             } else {
                 // MIN btc = 0.00000001
-                let tenDollarsInBTC: string = (10 / evaluation.price).toFixed(8).toString();
+                let tenDollarsInBTC: string = (10 / evaluation.price).toFixed(8);
                 order = {
                     type: "market",
                     side: "sell",
@@ -66,20 +66,20 @@ export class Evaluator {
     private accountValue(acnts: Array<Account>,tick:ProductTicker){
         console.info("-- Evaluating Account Info --");
         console.info("Accounts : ", acnts);
-        let accountValue: number;
+        let accountValue: number = 0;
         for (let account of acnts) {
             if (account.currency == "BTC") {
                 console.info("Account (" + account.currency + ") :");
                 console.info("balance - " + account.balance + "(" + account.currency + ")");
-                accountValue += (parseFloat(account.balance) * parseFloat(tick.price));
+                accountValue += parseFloat((parseFloat(account.balance) * parseFloat(tick.price)).toFixed(8));
                 console.info("balance in usd - " + (parseFloat(account.balance) * parseFloat(tick.price)))
             } else if (account.currency == "USD") {
-                console.info("Account (USD)");
-                accountValue += parseFloat(account.balance)
+                console.info("Account (USD) :");
+                accountValue += parseFloat(parseFloat(account.balance).toFixed(8));
                 console.info("balance - " + account.balance + "(" + account.currency + ")");
             }
         }
-        console.info("Total Account Value USD : " + accountValue);
+        console.info("Total Account Value USD : " + accountValue.toFixed(2));
         return accountValue;
     }
 
