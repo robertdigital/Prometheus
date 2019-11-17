@@ -11,5 +11,11 @@ describe('Simple Moving Average', function() {
 });
 
 describe('Exponential Moving Average', function() {
-    it('');
+    it('returns exponential average', function() {
+        let result = new TechnicalAnalyzer().ema(
+            [1.5554, 1.5555, 1.5558, 1.556],
+            4
+        );
+        expect(result[0]).equal(1.5556112);
+    });
 });
