@@ -1,23 +1,32 @@
 {
-  "name": "atila",
-  "version": "1.0.0",
-  "description": "Typescript Algo-Trading Bot",
-  "main": "dist/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Alan Sato",
-  "license": "MIT",
-  "dependencies": {
-    "@types/aws-lambda": "^8.10.31",
-    "@types/mongodb": "^3.3.2",
-    "@types/node": "^12.7.5",
-    "aws-lambda": "^0.1.2",
-    "coinbase-pro": "^0.9.0",
-    "mongodb": "^3.3.2",
-    "request": "^2.88.0",
-    "request-promise-native": "^1.0.7",
-    "typescript": "^3.6.3"
-  },
-  "devDependencies": {}
+    "name": "atila",
+    "version": "1.0.0",
+    "description": "Typescript Algo-Trading Bot",
+    "main": "dist/index.js",
+    "scripts": {
+        "test": "mocha -r ts-node/register tests/**/*.test.ts",
+        "coverage": "nyc -r lcov -e .ts -x \"*.test.ts\" npm run test"
+    },
+    "author": "Alan Sato",
+    "license": "MIT",
+    "dependencies": {
+        "@types/aws-lambda": "^8.10.31",
+        "@types/mongodb": "^3.3.2",
+        "@types/node": "^12.7.5",
+        "aws-lambda": "^0.1.2",
+        "coinbase-pro": "^0.9.0",
+        "mongodb": "^3.3.2",
+        "request": "^2.88.0",
+        "request-promise-native": "^1.0.7",
+        "ts-node": "^8.5.2",
+        "typescript": "^3.6.3"
+    },
+    "devDependencies": {
+        "@types/chai": "^4.2.5",
+        "@types/mocha": "^5.2.7",
+        "chai": "^4.2.0",
+        "mocha": "^6.2.2",
+        "nyc": "^14.1.1",
+        "prettier": "1.19.1"
+    }
 }
