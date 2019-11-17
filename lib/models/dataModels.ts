@@ -1,7 +1,8 @@
-import { OrderParams } from "coinbase-pro";
+import { OrderParams, Account } from "coinbase-pro";
 
 export class Evaluation {
     public date: Date;
+    public accountState: AccountState;
     public price: number;
     public indicators: Indicators;
     public order: OrderParams | null;
@@ -41,3 +42,12 @@ export class Indicators {
     }
 }
 
+export class AccountState {
+    public totalValue:number;
+    public accounts: Array<Account>;
+
+    constructor(value:number,acnts:Array<Account>){
+        this.totalValue=value;
+        this.accounts=acnts;
+    }
+}

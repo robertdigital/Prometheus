@@ -1,10 +1,10 @@
-import { AuthenticatedClient, ProductTicker, OrderParams } from "coinbase-pro"
-import { Evaluation } from "../models/dataModels";
+import { AuthenticatedClient, ProductTicker, OrderParams } from "coinbase-pro";
+import * as https from "https";
 
-const API_KEY: string = process.env.API_KEY ? process.env.API_KEY_TEST : '';
-const API_SECRET: string = process.env.API_SECRET ? process.env.API_SECRET_TEST : '';
-const PASS: string = process.env.PASS_PHRASE ? process.env.PASS_PHRASE_TEST : '';
-const API_URI: string = process.env.API_URI ? process.env.API_URI : '';
+const API_KEY: string = process.env.TEST ? process.env.API_KEY_TEST : process.env.API_KEY;
+const API_SECRET: string = process.env.TEST ? process.env.API_SECRET_TEST : process.env.API_SECRET;
+const PASS: string = process.env.TEST ? process.env.PASS_PHRASE_TEST : process.env.PASS_PHRASE;
+const API_URI: string = process.env.TEST ? process.env.API_URI_TEST : process.env.API_URI;
 const coinbaseProClient: AuthenticatedClient = new AuthenticatedClient(API_KEY, API_SECRET, PASS, API_URI);
 
 
@@ -40,10 +40,10 @@ export class APIController {
      * @returns PROMISE[ [ time, low, high, open, close, volume ], ...]
      * @memberof APIController
      */
-    public getHistoricRatesByDay(range: number, currency: string): Promise<Array<Array<number>>> {
+    public getHistoricClosingRatesByDay(range: number, currency: string): Promise<Array<number>> {
         let currentDate = new Date();
         let periodDate = new Date(new Date().setDate(currentDate.getDate() - range));
-        return coinbaseProClient.getProductHistoricRates(currency, { start: periodDate.toISOString(), end: currentDate.toISOString(), granularity: 86400 });
+        return coinbaseProClient.getProductHistoricRates(currency, { start: periodDate.toISOString(), end: currentDate.toISOString(), granularity: 86400 }).then((data: Array<Array<number>>) => { console.log(data); return this.slimCoinbaseHistory(data, 4) });
     }
 
     /**
@@ -53,8 +53,35 @@ export class APIController {
      * @memberof APIController
      */
     public executeOrder(order: OrderParams) {
-        console.info("Executing order: ",order);
+        console.info("Executing order: ", order);
         return coinbaseProClient.placeOrder(order);
+    }
+
+
+    /**
+     * Slims down historic data provided by coinbase. The base indicates which value to get. 
+     * 1 - High,
+     * 2 - Low,
+     * 3 - Open,
+     * 4 - Close,
+     * DEFAULT - 4 (Close)
+     *
+     * @param {Array<Array<number>>} history
+     * @param {number} base
+     * @returns
+     * @memberof APIController
+     */
+    public slimCoinbaseHistory(history: Array<Array<number>>, base: number) {
+        let slimmedArray: Array<number> = [];
+        for (let i = 0; i < history.length; i++) {
+            slimmedArray.push(history[i][base]);
+        }
+        return slimmedArray;
+    }
+
+
+    public getAccounts(){
+        return coinbaseProClient.getAccounts();
     }
 
 }
