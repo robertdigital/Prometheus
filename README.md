@@ -1,8 +1,8 @@
 # Prometheus - The serverless crypto trading bot
-Node JS Crypto trading bot.
-- Intended to be run on AWS-Lambda, using a cloudwatch event as a trigger to run on a specified interval, storing data to a MongoDB database.
-- Intended to only use within the free-tier usage restrictions of AWS and MongoDB Atlas.
-- Designed with Coinbase API in mind. This decision may change in the future.
+
+Intro:
+ Prometheus is a Crypto-currency trading bot written in Typescript. This bot is intended to be run within the free-tier usage restrictions of AWS Lambda, and MongoDB Atlas. The goal of this bot is to create a trading bot that anyone could set up and have trade on their behalf. The bot's mechanics and rules for trading should be clear and easy to adjust, allowing complete control over the investment account.
+
 
  ------- Updates ----------------------
 
