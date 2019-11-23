@@ -1,4 +1,4 @@
-# ATILA (Autonomous Technical Indicator Leveraging Application)
+# Prometheus - The serverless crypto trading bot
 Node JS Crypto trading bot.
 - Intended to be run on AWS-Lambda, using a cloudwatch event as a trigger to run on a specified interval, storing data to a MongoDB database.
 - Intended to only use within the free-tier usage restrictions of AWS and MongoDB Atlas.
