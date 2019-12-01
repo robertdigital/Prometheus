@@ -49,29 +49,30 @@ export class Evaluator {
                 ? new Indicators(macd[0], macdSignal[0], lastEval.indicators)
                 : new Indicators(macd[0], macdSignal[0]);
 
-        let order: OrderParams = null;
+        evaluation.orders = [];
         if (evaluation.indicators.macdCrossoverSignal) {
             if (evaluation.indicators.macdGTSignal) {
-                order = {
+                let order = {
                     type: 'market',
                     side: 'buy',
                     funds: '10',
                     product_id: 'BTC-USD'
                 } as MarketOrder;
+                evaluation.orders.push(order);
             } else {
                 // MIN btc = 0.00000001
                 let tenDollarsInBTC: string = (10 / evaluation.price).toFixed(
                     8
                 );
-                order = {
+                let order = {
                     type: 'market',
                     side: 'sell',
                     size: tenDollarsInBTC,
                     product_id: 'BTC-USD'
                 } as MarketOrder;
+                evaluation.orders.push(order);
             }
         }
-        evaluation.order = order;
         return evaluation;
     }
 

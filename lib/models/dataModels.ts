@@ -5,7 +5,7 @@ export class Evaluation {
     public accountState: AccountState;
     public price: number;
     public indicators: Indicators;
-    public order: OrderParams | null;
+    public orders: Array<OrderParams>;
 
     constructor() {
         this.date = new Date();

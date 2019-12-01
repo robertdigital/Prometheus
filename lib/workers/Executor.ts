@@ -23,19 +23,22 @@ export class Executor {
             })
             .then((evaluation: Evaluation) => {
                 // Once the evaluation is saved, check if there is an order;
-                if (evaluation.order) {
+                if (evaluation.orders.length > 0) {
                     console.info('Order Request Confirmed');
                     let apiController: APIController = new APIController();
-                    return apiController
-                        .executeOrder(evaluation.order)
-                        .then((res: OrderResult) =>
-                            console.info('Order placed successfully: ', res)
-                        )
-                        .catch(e => {
-                            console.error(e);
-                        });
+                    for (let order of evaluation.orders) {
+                        console.info('attempting to place order : ', order);
+                        apiController
+                            .executeOrder(order)
+                            .then((res: OrderResult) =>
+                                console.info('Order placed successfully: ', res)
+                            )
+                            .catch(e => {
+                                console.error(e);
+                            });
+                    }
                 } else {
-                    console.info('No Order');
+                    console.info('No Orders');
                 }
             });
     }
