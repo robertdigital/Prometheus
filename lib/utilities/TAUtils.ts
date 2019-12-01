@@ -1,7 +1,3 @@
-const RECORD_RATE: number = process.env.RECORD_RATE
-    ? parseInt(process.env.RECORD_RATE)
-    : 2;
-
 /**
  * Utility class with functions to get technical indicators on a security.
  *
