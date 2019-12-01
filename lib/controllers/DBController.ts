@@ -23,26 +23,48 @@ export class DBController {
             return MongoClient.connect(MONGODB_URI, {
                 useNewUrlParser: true,
                 useUnifiedTopology: true
-            }).then(Client => {
-                this.cachedDb = Client.db(DB_NAME);
-                console.info('Successfully established DB Connection');
-                return this.cachedDb;
-            });
+            })
+                .then(Client => {
+                    this.cachedDb = Client.db(DB_NAME);
+                    console.info(
+                        '***Successfully established DB Connection***'
+                    );
+                    return this.cachedDb;
+                })
+                .catch(e => {
+                    console.error(
+                        'Error: connectToDatabase - MongoClient.connect(uri,params) encountered an exception'
+                    );
+                    console.error(e);
+                    return null;
+                });
         }
     }
+
     public storeEvaluation(db: Db, data: Evaluation): Promise<Evaluation> {
         return db
             .collection(PRICE_COLLECTION)
             .insertOne(data)
             .then(() => {
-                console.info('Evaluation stored successfully!');
+                console.info('***Evaluation Stored Successfully***');
                 return data;
             })
-            .catch(() => {
+            .catch(e => {
+                console.error(
+                    'Error: storeEvaluation - collection(x).insertOne(y) encountered an exception'
+                );
+                console.error(e);
                 return null;
             });
     }
 
+    /**
+     * retrieves the previous evaluation from the database.
+     *
+     * @param {Db} db
+     * @returns {Promise<Array<any>>}
+     * @memberof DBController
+     */
     public getLastEvaluation(db: Db): Promise<Array<any>> {
         return db
             .collection(PRICE_COLLECTION)
