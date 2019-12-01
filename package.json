@@ -1,5 +1,5 @@
 {
-    "name": "atila",
+    "name": "prometheus",
     "version": "1.0.0",
     "description": "Typescript Algo-Trading Bot",
     "main": "dist/index.js",
