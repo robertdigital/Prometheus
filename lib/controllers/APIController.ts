@@ -78,7 +78,6 @@ export class APIController {
      * @memberof APIController
      */
     public executeOrder(order: OrderParams) {
-        console.info('Executing order: ', order);
         return coinbaseProClient.placeOrder(order);
     }
 
