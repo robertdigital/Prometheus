@@ -28,17 +28,20 @@ export class Executor {
                     let apiController: APIController = new APIController();
                     for (let order of evaluation.orders) {
                         console.info('attempting to place order : ', order);
-                        apiController
+                        return apiController
                             .executeOrder(order)
-                            .then((res: OrderResult) =>
+                            .then((res: OrderResult) => {
                                 console.info('Order placed successfully: ', res)
-                            )
+                                return true;
+                            })
                             .catch(e => {
                                 console.error(e);
+                                return false;
                             });
                     }
                 } else {
                     console.info('No Orders');
+                    return false;
                 }
             });
     }
