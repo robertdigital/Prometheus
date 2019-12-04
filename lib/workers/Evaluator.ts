@@ -1,6 +1,7 @@
 import { TechnicalAnalyzer } from '../utilities/TAUtils';
 import { ProductTicker, OrderParams, MarketOrder, Account } from 'coinbase-pro';
 import { Evaluation, Indicators, AccountState } from '../models/dataModels';
+import * as CONSTANTS from '../constants/constants';
 
 let ta: TechnicalAnalyzer = new TechnicalAnalyzer();
 
@@ -55,20 +56,17 @@ export class Evaluator {
                 let order = {
                     type: 'market',
                     side: 'buy',
-                    funds: '10',
-                    product_id: 'BTC-USD'
+                    funds: this.calculateOrderSize(evaluation.accountState.totalValue, accounts, CONSTANTS.USD, ticker),
+                    product_id: CONSTANTS.BTCUSD
                 } as MarketOrder;
                 evaluation.orders.push(order);
             } else {
                 // MIN btc = 0.00000001
-                let tenDollarsInBTC: string = (10 / evaluation.price).toFixed(
-                    8
-                );
                 let order = {
                     type: 'market',
                     side: 'sell',
-                    size: tenDollarsInBTC,
-                    product_id: 'BTC-USD'
+                    size: this.calculateOrderSize(evaluation.accountState.totalValue, accounts, CONSTANTS.BTC, ticker),
+                    product_id: CONSTANTS.BTCUSD
                 } as MarketOrder;
                 evaluation.orders.push(order);
             }
@@ -89,14 +87,14 @@ export class Evaluator {
         console.info('Accounts : ', acnts);
         let accountValue: number = 0;
         for (let account of acnts) {
-            if (account.currency == 'BTC') {
+            if (account.currency == CONSTANTS.BTC) {
                 console.info('Account (' + account.currency + ') :');
                 console.info(
                     'balance - ' +
-                        account.balance +
-                        '(' +
-                        account.currency +
-                        ')'
+                    account.balance +
+                    '(' +
+                    account.currency +
+                    ')'
                 );
                 accountValue += parseFloat(
                     (
@@ -105,23 +103,59 @@ export class Evaluator {
                 );
                 console.info(
                     'balance in usd - ' +
-                        parseFloat(account.balance) * parseFloat(tick.price)
+                    parseFloat(account.balance) * parseFloat(tick.price)
                 );
-            } else if (account.currency == 'USD') {
+            } else if (account.currency == CONSTANTS.USD) {
                 console.info('Account (USD) :');
                 accountValue += parseFloat(
                     parseFloat(account.balance).toFixed(8)
                 );
                 console.info(
                     'balance - ' +
-                        account.balance +
-                        '(' +
-                        account.currency +
-                        ')'
+                    account.balance +
+                    '(' +
+                    account.currency +
+                    ')'
                 );
             }
         }
         console.info('Total Account Value USD : ' + accountValue.toFixed(2));
         return accountValue;
+    }
+
+
+
+    /**
+     * Calculates the size of an order to place.
+     *
+     * @private
+     * @param {number} accountValue
+     * @param {Array<Account>} accounts
+     * @param {String} currency
+     * @param {ProductTicker} ticker
+     * @returns {String}
+     * @memberof Evaluator
+     */
+    private calculateOrderSize(accountValue: number, accounts: Array<Account>, currency: String, ticker: ProductTicker): String {
+        let maxOrderSize: number = (0.02 * accountValue);
+        let order: String;
+        for (let account of accounts) {
+            if (account.currency == currency) {
+                if (currency == CONSTANTS.USD) {
+                    if (maxOrderSize > parseFloat(account.balance)) {
+                        order = parseFloat(account.balance).toFixed(2);
+                    } else {
+                        order = maxOrderSize.toFixed(2)
+                    }
+                } else {
+                    if ((maxOrderSize / parseFloat(ticker.price)) > parseFloat(account.balance)) {
+                        order = parseFloat(account.balance).toFixed(8);
+                    } else {
+                        order = (maxOrderSize / parseFloat(ticker.price)).toFixed(8);
+                    }
+                }
+            }
+        }
+        return order;
     }
 }
