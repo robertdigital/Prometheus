@@ -138,24 +138,24 @@ export class Evaluator {
      */
     private calculateOrderSize(accountValue: number, accounts: Array<Account>, currency: String, ticker: ProductTicker): String {
         let maxOrderSize: number = (0.02 * accountValue);
-        let order: String;
+        let orderSize: String;
         for (let account of accounts) {
             if (account.currency == currency) {
                 if (currency == CONSTANTS.USD) {
                     if (maxOrderSize > parseFloat(account.balance)) {
-                        order = parseFloat(account.balance).toFixed(2);
+                        orderSize = parseFloat(account.balance).toFixed(CONSTANTS.USDPRECISION);
                     } else {
-                        order = maxOrderSize.toFixed(2)
+                        orderSize = maxOrderSize.toFixed(CONSTANTS.USDPRECISION)
                     }
                 } else {
                     if ((maxOrderSize / parseFloat(ticker.price)) > parseFloat(account.balance)) {
-                        order = parseFloat(account.balance).toFixed(8);
+                        orderSize = parseFloat(account.balance).toFixed(CONSTANTS.BTCPRECISION);
                     } else {
-                        order = (maxOrderSize / parseFloat(ticker.price)).toFixed(8);
+                        orderSize = (maxOrderSize / parseFloat(ticker.price)).toFixed(CONSTANTS.BTCPRECISION);
                     }
                 }
             }
         }
-        return order;
+        return orderSize;
     }
 }
