@@ -1,22 +1,33 @@
-import { AuthenticatedClient, ProductTicker, OrderParams } from "coinbase-pro";
-import * as https from "https";
+import { AuthenticatedClient, ProductTicker, OrderParams } from 'coinbase-pro';
+import * as https from 'https';
 
-const API_KEY: string = process.env.TEST ? process.env.API_KEY_TEST : process.env.API_KEY;
-const API_SECRET: string = process.env.TEST ? process.env.API_SECRET_TEST : process.env.API_SECRET;
-const PASS: string = process.env.TEST ? process.env.PASS_PHRASE_TEST : process.env.PASS_PHRASE;
-const API_URI: string = process.env.TEST ? process.env.API_URI_TEST : process.env.API_URI;
-const coinbaseProClient: AuthenticatedClient = new AuthenticatedClient(API_KEY, API_SECRET, PASS, API_URI);
-
+const API_KEY: string = process.env.TEST
+    ? process.env.API_KEY_TEST
+    : process.env.API_KEY;
+const API_SECRET: string = process.env.TEST
+    ? process.env.API_SECRET_TEST
+    : process.env.API_SECRET;
+const PASS: string = process.env.TEST
+    ? process.env.PASS_PHRASE_TEST
+    : process.env.PASS_PHRASE;
+const API_URI: string = process.env.TEST
+    ? process.env.API_URI_TEST
+    : process.env.API_URI;
+const coinbaseProClient: AuthenticatedClient = new AuthenticatedClient(
+    API_KEY,
+    API_SECRET,
+    PASS,
+    API_URI
+);
 
 /**
  * Controller to access the Coinbase PRO API (https://docs.pro.coinbase.com/)
  * Contains methods to simplify the client requests and add logging.
- * 
+ *
  * @export
  * @class APIController
  */
 export class APIController {
-
     /**
      * gets a ProductTicker object from the Coinbase Pro API which contains a security's current price
      *
@@ -40,10 +51,24 @@ export class APIController {
      * @returns PROMISE[ [ time, low, high, open, close, volume ], ...]
      * @memberof APIController
      */
-    public getHistoricClosingRatesByDay(range: number, currency: string): Promise<Array<number>> {
+    public getHistoricClosingRatesByDay(
+        range: number,
+        currency: string
+    ): Promise<Array<number>> {
         let currentDate = new Date();
-        let periodDate = new Date(new Date().setDate(currentDate.getDate() - range));
-        return coinbaseProClient.getProductHistoricRates(currency, { start: periodDate.toISOString(), end: currentDate.toISOString(), granularity: 86400 }).then((data: Array<Array<number>>) => { console.log(data); return this.slimCoinbaseHistory(data, 4) });
+        let periodDate = new Date(
+            new Date().setDate(currentDate.getDate() - range)
+        );
+        return coinbaseProClient
+            .getProductHistoricRates(currency, {
+                start: periodDate.toISOString(),
+                end: currentDate.toISOString(),
+                granularity: 86400
+            })
+            .then((data: Array<Array<number>>) => {
+                console.log(data);
+                return this.slimCoinbaseHistory(data, 4);
+            });
     }
 
     /**
@@ -53,13 +78,11 @@ export class APIController {
      * @memberof APIController
      */
     public executeOrder(order: OrderParams) {
-        console.info("Executing order: ", order);
         return coinbaseProClient.placeOrder(order);
     }
 
-
     /**
-     * Slims down historic data provided by coinbase. The base indicates which value to get. 
+     * Slims down historic data provided by coinbase. The base indicates which value to get.
      * 1 - High,
      * 2 - Low,
      * 3 - Open,
@@ -79,9 +102,7 @@ export class APIController {
         return slimmedArray;
     }
 
-
-    public getAccounts(){
+    public getAccounts() {
         return coinbaseProClient.getAccounts();
     }
-
 }
