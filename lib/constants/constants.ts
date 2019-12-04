@@ -1,15 +1,15 @@
 export const BTC: string = 'BTC';
 export const USD: string = 'USD';
-export const BTCUSD: string = 'BTC-USD';
-export const MARKETORDER: string = 'market';
-export const LIMITORDER: string = 'limit';
+export const BTC_USD: string = 'BTC-USD';
+export const MARKET_ORDER: string = 'market';
+export const LIMIT_ORDER: string = 'limit';
 export const BUY: string = 'buy';
 export const SELL: string = 'sell';
 
 
-export const USDMINIMUM: number = 10;
-export const USDMAXIMUM: number = 1000000;
-export const USDPRECISION: number = 2;
-export const BTCMINIMUM: number = 0.001;
-export const BTCMAXIMUM: number = 280.00000000;
-export const BTCPRECISION: number = 8;
+export const USD_MINIMUM: number = 10;
+export const USD_MAXIMUM: number = 1000000;
+export const USD_PRECISION: number = 2;
+export const BTC_MINIMUM: number = 0.001;
+export const BTC_MAXIMUM: number = 280.00000000;
+export const BTC_PRECISION: number = 8;

@@ -60,9 +60,9 @@ export class Evaluator {
                     type: 'market',
                     side: 'buy',
                     funds: orderSize,
-                    product_id: CONSTANTS.BTCUSD
+                    product_id: CONSTANTS.BTC_USD
                 } as MarketOrder;
-                if ((parseFloat(orderSize) > CONSTANTS.USDMINIMUM) && (orderSizeNumber < CONSTANTS.USDMAXIMUM)) {
+                if ((parseFloat(orderSize) > CONSTANTS.USD_MINIMUM) && (orderSizeNumber < CONSTANTS.USD_MAXIMUM)) {
                     evaluation.orders.push(order);
                 }
             } else {
@@ -73,9 +73,9 @@ export class Evaluator {
                     type: 'market',
                     side: 'sell',
                     size: orderSize,
-                    product_id: CONSTANTS.BTCUSD
+                    product_id: CONSTANTS.BTC_USD
                 } as MarketOrder;
-                if ((parseFloat(orderSize) > CONSTANTS.BTCMINIMUM) && (orderSizeNumber < CONSTANTS.BTCMAXIMUM)) {
+                if ((parseFloat(orderSize) > CONSTANTS.BTC_MINIMUM) && (orderSizeNumber < CONSTANTS.BTC_MAXIMUM)) {
                     evaluation.orders.push(order);
                 }
             }
@@ -150,15 +150,15 @@ export class Evaluator {
             if (account.currency == currency) {
                 if (currency == CONSTANTS.USD) {
                     if (maxOrderSize > parseFloat(account.balance)) {
-                        orderSize = parseFloat(account.balance).toFixed(CONSTANTS.USDPRECISION);
+                        orderSize = parseFloat(account.balance).toFixed(CONSTANTS.USD_PRECISION);
                     } else {
-                        orderSize = maxOrderSize.toFixed(CONSTANTS.USDPRECISION)
+                        orderSize = maxOrderSize.toFixed(CONSTANTS.USD_PRECISION)
                     }
                 } else {
                     if ((maxOrderSize / parseFloat(ticker.price)) > parseFloat(account.balance)) {
-                        orderSize = parseFloat(account.balance).toFixed(CONSTANTS.BTCPRECISION);
+                        orderSize = parseFloat(account.balance).toFixed(CONSTANTS.BTC_PRECISION);
                     } else {
-                        orderSize = (maxOrderSize / parseFloat(ticker.price)).toFixed(CONSTANTS.BTCPRECISION);
+                        orderSize = (maxOrderSize / parseFloat(ticker.price)).toFixed(CONSTANTS.BTC_PRECISION);
                     }
                 }
             }
