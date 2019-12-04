@@ -2,6 +2,7 @@ import { TechnicalAnalyzer } from '../utilities/TAUtils';
 import { ProductTicker, OrderParams, MarketOrder, Account } from 'coinbase-pro';
 import { Evaluation, Indicators, AccountState } from '../models/dataModels';
 import * as CONSTANTS from '../constants/constants';
+import { constants } from 'crypto';
 
 let ta: TechnicalAnalyzer = new TechnicalAnalyzer();
 
@@ -53,22 +54,30 @@ export class Evaluator {
         evaluation.orders = [];
         if (evaluation.indicators.macdCrossoverSignal) {
             if (evaluation.indicators.macdGTSignal) {
+                let orderSize = this.calculateOrderSize(evaluation.accountState.totalValue, accounts, CONSTANTS.USD, ticker);
+                let orderSizeNumber = parseFloat(orderSize);
                 let order = {
                     type: 'market',
                     side: 'buy',
-                    funds: this.calculateOrderSize(evaluation.accountState.totalValue, accounts, CONSTANTS.USD, ticker),
+                    funds: orderSize,
                     product_id: CONSTANTS.BTCUSD
                 } as MarketOrder;
-                evaluation.orders.push(order);
+                if ((parseFloat(orderSize) > CONSTANTS.USDMINIMUM) && (orderSizeNumber < CONSTANTS.USDMAXIMUM)) {
+                    evaluation.orders.push(order);
+                }
             } else {
                 // MIN btc = 0.00000001
+                let orderSize = this.calculateOrderSize(evaluation.accountState.totalValue, accounts, CONSTANTS.BTC, ticker);
+                let orderSizeNumber = parseFloat(orderSize);
                 let order = {
                     type: 'market',
                     side: 'sell',
-                    size: this.calculateOrderSize(evaluation.accountState.totalValue, accounts, CONSTANTS.BTC, ticker),
+                    size: orderSize,
                     product_id: CONSTANTS.BTCUSD
                 } as MarketOrder;
-                evaluation.orders.push(order);
+                if ((parseFloat(orderSize) > CONSTANTS.BTCMINIMUM) && (orderSizeNumber < CONSTANTS.BTCMAXIMUM)) {
+                    evaluation.orders.push(order);
+                }
             }
         }
         return evaluation;
@@ -123,8 +132,6 @@ export class Evaluator {
         return accountValue;
     }
 
-
-
     /**
      * Calculates the size of an order to place.
      *
@@ -136,9 +143,9 @@ export class Evaluator {
      * @returns {String}
      * @memberof Evaluator
      */
-    private calculateOrderSize(accountValue: number, accounts: Array<Account>, currency: String, ticker: ProductTicker): String {
+    private calculateOrderSize(accountValue: number, accounts: Array<Account>, currency: String, ticker: ProductTicker): string {
         let maxOrderSize: number = (0.02 * accountValue);
-        let orderSize: String;
+        let orderSize: string;
         for (let account of accounts) {
             if (account.currency == currency) {
                 if (currency == CONSTANTS.USD) {
