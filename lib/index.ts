@@ -49,8 +49,8 @@ const handler: Handler = (event: any, context: Context, callback: Callback) => {
             }
             return executor.executeEval(dbController, evaluation);
         })
-        .then(() => {
-            callback(null, 'Complete');
+        .then((placedOrder: boolean) => {
+            placedOrder ? callback(null, 'ORDER PLACED') : callback(null, 'NO ORDER PLACED');
         })
         .catch(e => {
             callback(e);
