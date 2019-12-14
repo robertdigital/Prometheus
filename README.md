@@ -5,6 +5,8 @@ Intro:
 
 
  ------- Updates ----------------------
+ 
+(12/4/2019) - Bot now trades in variable amounts. - more advanced trading rules to come to better utilize the system. (rn will rarely trade)
 
 (10/30/2019) - Bot works using sandbox api. Trades based on MACD signal crossovers. Trades in $10 units.
 
