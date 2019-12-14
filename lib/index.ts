@@ -35,7 +35,7 @@ const handler: Handler = (event: any, context: Context, callback: Callback) => {
             if (!evaluator) {
                 evaluator = new Evaluator();
             }
-            return evaluator.evaluateConditions(
+            return evaluator.evaluate(
                 res[0],
                 res[1],
                 res[2],
