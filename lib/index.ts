@@ -5,6 +5,7 @@ import { APIController } from './controllers/APIController';
 import { Evaluator } from './workers/Evaluator';
 import { Executor } from './workers/Executor';
 import { Evaluation } from './models/dataModels';
+import { OrderResult } from 'coinbase-pro';
 
 let dbController: DBController | null = null;
 let apiController: APIController | null = null;
@@ -49,8 +50,12 @@ const handler: Handler = (event: any, context: Context, callback: Callback) => {
             }
             return executor.executeEval(dbController, evaluation);
         })
-        .then((placedOrder: boolean) => {
-            placedOrder ? callback(null, 'ORDER PLACED') : callback(null, 'NO ORDER PLACED');
+        .then((placedOrders: Array<OrderResult>) => {
+            if (placedOrders && placedOrders.length > 0) {
+                callback(null, 'ORDER(S) PLACED')
+            } else {
+                callback(null, 'NO ORDER PLACED');
+            }
         })
         .catch(e => {
             callback(e);
