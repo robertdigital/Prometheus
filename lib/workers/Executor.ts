@@ -3,7 +3,6 @@ import { APIController } from '../controllers/APIController';
 import { Evaluation } from '../models/dataModels';
 import { Db } from 'mongodb';
 import { OrderResult, OrderParams } from 'coinbase-pro';
-import { LIMIT_ORDER } from 'constants/constants';
 
 export class Executor {
     /**
@@ -32,25 +31,6 @@ export class Executor {
                     console.log(orders + " orders to place");
                     let promises = evaluation.orders.map((order: OrderParams) => apiController.executeOrder(order));
                     return Promise.all(promises).then((Responses: Array<OrderResult>) => { console.log(Responses); return Responses })
-                    // for (let i = 0; i < orders; i++) {
-                    //     console.info('attempting to place order : ', evaluation.orders[i]);
-                    //     apiController
-                    //         .executeOrder(evaluation.orders[i])
-                    //         .then((res: OrderResult) => {
-                    //             console.info('Order placed successfully: ', res)
-                    //             success.push(true);
-                    //             if (success.length == orders) {
-                    //                 return success;
-                    //             }
-                    //         })
-                    //         .catch(e => {
-                    //             console.error(e);
-                    //             success.push(false);
-                    //             if (success.length == orders) {
-                    //                 return success;
-                    //             }
-                    //         });
-                    // }
                 } else {
                     console.info('No Orders');
                     return [];

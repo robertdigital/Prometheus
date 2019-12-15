@@ -98,7 +98,7 @@ export class Evaluator {
     private calculateOrderSize(accountValue: number, accounts: Array<Account>, currency: String, ticker: ProductTicker): string {
         let riskAmount: number = (CONSTANTS.RISK_PERCENT * accountValue);
         let orderSize: string;
-        let maxOrderSize = ((riskAmount * 2) / CONSTANTS.EXPECTABLE_CHANGE);
+        let maxOrderSize = ((riskAmount * CONSTANTS.REWARD_RISK_RATIO) / CONSTANTS.EXPECTABLE_CHANGE);
         for (let account of accounts) {
             if (account.currency == currency) {
                 if (currency == CONSTANTS.USD) {
@@ -120,8 +120,20 @@ export class Evaluator {
         return orderSize;
     }
 
+    /**
+     * Calculates where to place stop loss limit order price point.
+     * expectable change is a percent based on observation, how much we might expect the bitcoin price to move.
+     * The expectable change is an observation of growth, and helps determine the order size.
+     * following that ordersize is crafted by deviding the ideal reward for the trade(2x the risk) by the percent we expect the price to change by
+     * we know that to prevent more than the risk amount we place the limit price at half the expectable change
+     *
+     * @private
+     * @param {ProductTicker} ticker
+     * @returns {string}
+     * @memberof Evaluator
+     */
     private calculateStopLossLimitOrderPricePoint(ticker: ProductTicker): string {
-        return (parseFloat(ticker.price) - (parseFloat(ticker.price) * CONSTANTS.EXPECTABLE_CHANGE)).toFixed(CONSTANTS.USD_PRECISION);
+        return (parseFloat(ticker.price) - (parseFloat(ticker.price) * (CONSTANTS.EXPECTABLE_CHANGE / CONSTANTS.REWARD_RISK_RATIO))).toFixed(CONSTANTS.USD_PRECISION);
     }
 
     /**
