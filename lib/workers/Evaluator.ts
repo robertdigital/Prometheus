@@ -1,12 +1,12 @@
 import { TechnicalAnalyzer } from '../utilities/TAUtils';
-import { ProductTicker, OrderParams, MarketOrder, Account } from 'coinbase-pro';
+import { ProductTicker, OrderParams, MarketOrder, Account, LimitOrder, StopOrder } from 'coinbase-pro';
 import { Evaluation, Indicators, AccountState } from '../models/dataModels';
 import * as CONSTANTS from '../constants/constants';
-import { constants } from 'crypto';
 
 let ta: TechnicalAnalyzer = new TechnicalAnalyzer();
 
 export class Evaluator {
+
     /**
      * Main method of the evaluator.
      *  Full parameters not yet final. WIll take any necessary info
@@ -18,7 +18,7 @@ export class Evaluator {
      * @returns
      * @memberof Evaluator
      */
-    public async evaluateConditions(
+    public async evaluate(
         ticker: ProductTicker,
         accounts: Array<Account>,
         orderBook: Array<any>,
@@ -51,35 +51,8 @@ export class Evaluator {
                 ? new Indicators(macd[0], macdSignal[0], lastEval.indicators)
                 : new Indicators(macd[0], macdSignal[0]);
 
-        evaluation.orders = [];
-        if (evaluation.indicators.macdCrossoverSignal) {
-            if (evaluation.indicators.macdGTSignal) {
-                let orderSize = this.calculateOrderSize(evaluation.accountState.totalValue, accounts, CONSTANTS.USD, ticker);
-                let orderSizeNumber = parseFloat(orderSize);
-                let order = {
-                    type: 'market',
-                    side: 'buy',
-                    funds: orderSize,
-                    product_id: CONSTANTS.BTC_USD
-                } as MarketOrder;
-                if ((parseFloat(orderSize) > CONSTANTS.USD_MINIMUM) && (orderSizeNumber < CONSTANTS.USD_MAXIMUM)) {
-                    evaluation.orders.push(order);
-                }
-            } else {
-                // MIN btc = 0.00000001
-                let orderSize = this.calculateOrderSize(evaluation.accountState.totalValue, accounts, CONSTANTS.BTC, ticker);
-                let orderSizeNumber = parseFloat(orderSize);
-                let order = {
-                    type: 'market',
-                    side: 'sell',
-                    size: orderSize,
-                    product_id: CONSTANTS.BTC_USD
-                } as MarketOrder;
-                if ((parseFloat(orderSize) > CONSTANTS.BTC_MINIMUM) && (orderSizeNumber < CONSTANTS.BTC_MAXIMUM)) {
-                    evaluation.orders.push(order);
-                }
-            }
-        }
+        evaluation.orders = this.decideOrder(ticker, evaluation.indicators, accounts, evaluation.accountState);
+
         return evaluation;
     }
 
@@ -98,34 +71,13 @@ export class Evaluator {
         for (let account of acnts) {
             if (account.currency == CONSTANTS.BTC) {
                 console.info('Account (' + account.currency + ') :');
-                console.info(
-                    'balance - ' +
-                    account.balance +
-                    '(' +
-                    account.currency +
-                    ')'
-                );
-                accountValue += parseFloat(
-                    (
-                        parseFloat(account.balance) * parseFloat(tick.price)
-                    ).toFixed(8)
-                );
-                console.info(
-                    'balance in usd - ' +
-                    parseFloat(account.balance) * parseFloat(tick.price)
-                );
+                console.info(' >balance - ' + account.balance + '(' + account.currency + ')');
+                accountValue += parseFloat((parseFloat(account.balance) * parseFloat(tick.price)).toFixed(8));
+                console.info(' >balance in usd - ' + parseFloat(account.balance) * parseFloat(tick.price));
             } else if (account.currency == CONSTANTS.USD) {
                 console.info('Account (USD) :');
-                accountValue += parseFloat(
-                    parseFloat(account.balance).toFixed(8)
-                );
-                console.info(
-                    'balance - ' +
-                    account.balance +
-                    '(' +
-                    account.currency +
-                    ')'
-                );
+                accountValue += parseFloat(parseFloat(account.balance).toFixed(8));
+                console.info(' >balance - ' + account.balance + '(' + account.currency + ')');
             }
         }
         console.info('Total Account Value USD : ' + accountValue.toFixed(2));
@@ -144,8 +96,9 @@ export class Evaluator {
      * @memberof Evaluator
      */
     private calculateOrderSize(accountValue: number, accounts: Array<Account>, currency: String, ticker: ProductTicker): string {
-        let maxOrderSize: number = (0.02 * accountValue);
+        let riskAmount: number = (CONSTANTS.RISK_PERCENT * accountValue);
         let orderSize: string;
+        let maxOrderSize = ((riskAmount * 2) / CONSTANTS.EXPECTABLE_CHANGE);
         for (let account of accounts) {
             if (account.currency == currency) {
                 if (currency == CONSTANTS.USD) {
@@ -163,6 +116,69 @@ export class Evaluator {
                 }
             }
         }
+
         return orderSize;
     }
+
+    private calculateStopLossLimitOrderPricePoint(ticker: ProductTicker): string {
+        return (parseFloat(ticker.price) - (parseFloat(ticker.price) * CONSTANTS.EXPECTABLE_CHANGE)).toFixed(CONSTANTS.USD_PRECISION);
+    }
+
+    /**
+     *
+     *
+     * @private
+     * @param {ProductTicker} ticker
+     * @param {Indicators} indicators
+     * @param {Array<Account>} accounts
+     * @param {AccountState} accountState
+     * @returns {Array<OrderParams>} Array of orders. empty array if no order to be placed.
+     * @memberof Evaluator
+     */
+    private decideOrder(ticker: ProductTicker, indicators: Indicators, accounts: Array<Account>, accountState: AccountState): Array<OrderParams> {
+        let orders: Array<OrderParams> = [];
+        if (indicators.macdCrossoverSignal) {
+            if (indicators.macdGTSignal) {
+                let orderSize = this.calculateOrderSize(accountState.totalValue, accounts, CONSTANTS.USD, ticker);
+                let limitOrderSize = this.calculateOrderSize(accountState.totalValue, accounts, CONSTANTS.BTC, ticker);
+                let orderSizeNumber = parseFloat(orderSize);
+                let marketOrder = {
+                    type: 'market',
+                    side: 'buy',
+                    funds: orderSize,
+                    product_id: CONSTANTS.BTC_USD
+                } as MarketOrder;
+                let stopLossLimitOrder = {
+                    type: 'limit',
+                    funds: orderSize,
+                    side: 'sell',
+                    price: this.calculateStopLossLimitOrderPricePoint(ticker),
+                    stop_price: this.calculateStopLossLimitOrderPricePoint(ticker),
+                    size: limitOrderSize,
+                    product_id: CONSTANTS.BTC_USD,
+                    stop: 'loss'
+                } as LimitOrder;
+                if ((parseFloat(orderSize) > CONSTANTS.USD_MINIMUM) && (orderSizeNumber < CONSTANTS.USD_MAXIMUM)) {
+                    orders.push(marketOrder);
+                    orders.push(stopLossLimitOrder);
+                }
+            } else {
+                // MIN btc = 0.00000001
+                let orderSize = this.calculateOrderSize(accountState.totalValue, accounts, CONSTANTS.BTC, ticker);
+                let orderSizeNumber = parseFloat(orderSize);
+                let sellOrder = {
+                    type: 'market',
+                    side: 'sell',
+                    size: orderSize,
+                    product_id: CONSTANTS.BTC_USD
+                } as MarketOrder;
+                if ((parseFloat(orderSize) > CONSTANTS.BTC_MINIMUM) && (orderSizeNumber < CONSTANTS.BTC_MAXIMUM)) {
+                    orders.push(sellOrder);
+                }
+            }
+        }
+        return orders;
+    }
+
+
 }

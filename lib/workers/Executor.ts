@@ -2,7 +2,8 @@ import { DBController } from '../controllers/DBController';
 import { APIController } from '../controllers/APIController';
 import { Evaluation } from '../models/dataModels';
 import { Db } from 'mongodb';
-import { OrderResult } from 'coinbase-pro';
+import { OrderResult, OrderParams } from 'coinbase-pro';
+import { LIMIT_ORDER } from 'constants/constants';
 
 export class Executor {
     /**
@@ -14,7 +15,7 @@ export class Executor {
      * @returns
      * @memberof Executor
      */
-    public executeEval(dbController: DBController, evaluation: Evaluation) {
+    public async executeEval(dbController: DBController, evaluation: Evaluation) {
         // Save Evaluation
         return dbController
             .connectToDatabase()
@@ -26,22 +27,33 @@ export class Executor {
                 if (evaluation.orders.length > 0) {
                     console.info('Order Request Confirmed');
                     let apiController: APIController = new APIController();
-                    for (let order of evaluation.orders) {
-                        console.info('attempting to place order : ', order);
-                        return apiController
-                            .executeOrder(order)
-                            .then((res: OrderResult) => {
-                                console.info('Order placed successfully: ', res)
-                                return true;
-                            })
-                            .catch(e => {
-                                console.error(e);
-                                return false;
-                            });
-                    }
+                    let success: Array<boolean> = [];
+                    let orders = evaluation.orders.length;
+                    console.log(orders + " orders to place");
+                    let promises = evaluation.orders.map((order: OrderParams) => apiController.executeOrder(order));
+                    return Promise.all(promises).then((Responses: Array<OrderResult>) => { console.log(Responses); return Responses })
+                    // for (let i = 0; i < orders; i++) {
+                    //     console.info('attempting to place order : ', evaluation.orders[i]);
+                    //     apiController
+                    //         .executeOrder(evaluation.orders[i])
+                    //         .then((res: OrderResult) => {
+                    //             console.info('Order placed successfully: ', res)
+                    //             success.push(true);
+                    //             if (success.length == orders) {
+                    //                 return success;
+                    //             }
+                    //         })
+                    //         .catch(e => {
+                    //             console.error(e);
+                    //             success.push(false);
+                    //             if (success.length == orders) {
+                    //                 return success;
+                    //             }
+                    //         });
+                    // }
                 } else {
                     console.info('No Orders');
-                    return false;
+                    return [];
                 }
             });
     }
