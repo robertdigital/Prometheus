@@ -5,7 +5,8 @@ import { APIController } from './controllers/APIController';
 import { Evaluator } from './workers/Evaluator';
 import { Executor } from './workers/Executor';
 import { Evaluation } from './models/dataModels';
-import { OrderResult } from 'coinbase-pro';
+import { OrderResult, ProductTicker, Account } from 'coinbase-pro';
+import * as CONSTANTS from './constants/constants';
 
 let dbController: DBController | null = null;
 let apiController: APIController | null = null;
@@ -22,7 +23,7 @@ const handler: Handler = (event: any, context: Context, callback: Callback) => {
         dbController = new DBController();
     }
 
-    let currency = 'BTC-USD';
+    let currency = CONSTANTS.BTC_USD;
     Promise.all([
         apiController.getTicker(currency),
         apiController.getAccounts(),
@@ -32,16 +33,16 @@ const handler: Handler = (event: any, context: Context, callback: Callback) => {
             return dbController.getLastEvaluation(db);
         })
     ])
-        .then((res: any[]) => {
+        .then(([ticker,accounts,orderBook,historicRates,dbConnection]:[ProductTicker,Array<Account>,Array<any>,Array<number>,any]) => {
             if (!evaluator) {
                 evaluator = new Evaluator();
             }
             return evaluator.evaluate(
-                res[0],
-                res[1],
-                res[2],
-                res[3],
-                res[4][0]
+                ticker,
+                accounts,
+                orderBook,
+                historicRates,
+                dbConnection[0]
             );
         })
         .then((evaluation: Evaluation) => {
