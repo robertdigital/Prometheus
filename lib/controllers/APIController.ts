@@ -39,8 +39,24 @@ export class APIController {
         return coinbaseProClient.getProductTicker(currency);
     }
 
+    public getTickers(currencies: Array<string>): Promise<Array<ProductTicker>> {
+        let promises: Array<Promise<ProductTicker>> = [];
+        for (let currency of currencies) {
+            promises.push(coinbaseProClient.getProductTicker(currency));
+        }
+        return Promise.all(promises);
+    }
+
     public getOrderBook(currency: string): Promise<any> {
         return coinbaseProClient.getProductOrderBook(currency, { level: 2 });
+    }
+
+    public getOrderBooks(currencies: Array<string>): Promise<any> {
+        let promises: Array<Promise<any>> = [];
+        for (let currency of currencies) {
+            promises.push(coinbaseProClient.getProductOrderBook(currency, { level: 2 }));
+        }
+        return Promise.all(promises);
     }
 
     /**
@@ -51,10 +67,7 @@ export class APIController {
      * @returns PROMISE[ [ time, low, high, open, close, volume ], ...]
      * @memberof APIController
      */
-    public getHistoricClosingRatesByDay(
-        range: number,
-        currency: string
-    ): Promise<Array<number>> {
+    public getHistoricClosingRatesByDay(range: number, currency: string): Promise<Array<number>> {
         let currentDate = new Date();
         let periodDate = new Date(
             new Date().setDate(currentDate.getDate() - range)
@@ -69,6 +82,14 @@ export class APIController {
                 console.log(data);
                 return this.slimCoinbaseHistory(data, 4);
             });
+    }
+
+    public getMultipleHistoricClosingRatesByDay(range: number, currencies: Array<string>) {
+        let promises = [];
+        for (let currency of currencies) {
+            promises.push(this.getHistoricClosingRatesByDay(range,currency));
+        }
+        return Promise.all(promises);
     }
 
     /**
