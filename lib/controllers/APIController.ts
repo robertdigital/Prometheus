@@ -1,18 +1,10 @@
 import { AuthenticatedClient, ProductTicker, OrderParams } from 'coinbase-pro';
 import * as https from 'https';
 
-const API_KEY: string = process.env.TEST
-    ? process.env.API_KEY_TEST
-    : process.env.API_KEY;
-const API_SECRET: string = process.env.TEST
-    ? process.env.API_SECRET_TEST
-    : process.env.API_SECRET;
-const PASS: string = process.env.TEST
-    ? process.env.PASS_PHRASE_TEST
-    : process.env.PASS_PHRASE;
-const API_URI: string = process.env.TEST
-    ? process.env.API_URI_TEST
-    : process.env.API_URI;
+const API_KEY: string = process.env.API_KEY;
+const API_SECRET: string = process.env.API_SECRET;
+const PASS: string = process.env.PASS_PHRASE;
+const API_URI: string = process.env.API_URI;
 const coinbaseProClient: AuthenticatedClient = new AuthenticatedClient(
     API_KEY,
     API_SECRET,
