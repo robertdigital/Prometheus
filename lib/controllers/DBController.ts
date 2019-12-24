@@ -1,5 +1,5 @@
-import { Db, MongoClient } from 'mongodb';
-import { Evaluation } from '../models/dataModels';
+import { Db, MongoClient } from "mongodb";
+import { Evaluation } from "../models/dataModels";
 
 const MONGODB_URI: string = process.env.MONGODB_URI;
 const DB_NAME: string = process.env.DB_NAME;
@@ -10,10 +10,10 @@ export class DBController {
 
     public connectToDatabase(): Promise<Db> {
         if (this.cachedDb) {
-            console.info('***Using cached DB***');
+            console.info("***Using cached DB***");
             return Promise.resolve(this.cachedDb);
         } else {
-            console.info('***Creating new DB connection instance***');
+            console.info("***Creating new DB connection instance***");
             return MongoClient.connect(MONGODB_URI, {
                 useNewUrlParser: true,
                 useUnifiedTopology: true
@@ -21,13 +21,13 @@ export class DBController {
                 .then(Client => {
                     this.cachedDb = Client.db(DB_NAME);
                     console.info(
-                        '***Successfully established DB Connection***'
+                        "***Successfully established DB Connection***"
                     );
                     return this.cachedDb;
                 })
                 .catch(e => {
                     console.error(
-                        'Error: connectToDatabase - MongoClient.connect(uri,params) encountered an exception'
+                        "Error: connectToDatabase - MongoClient.connect(uri,params) encountered an exception"
                     );
                     console.error(e);
                     return null;
@@ -40,12 +40,12 @@ export class DBController {
             .collection(PRICE_COLLECTION)
             .insertOne(data)
             .then(() => {
-                console.info('***Evaluation Stored Successfully***');
+                console.info("***Evaluation Stored Successfully***");
                 return data;
             })
             .catch(e => {
                 console.error(
-                    'Error: storeEvaluation - collection(x).insertOne(y) encountered an exception'
+                    "Error: storeEvaluation - collection(x).insertOne(y) encountered an exception"
                 );
                 console.error(e);
                 return null;

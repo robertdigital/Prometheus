@@ -1,5 +1,5 @@
-import { AuthenticatedClient, ProductTicker, OrderParams } from 'coinbase-pro';
-import * as https from 'https';
+import { AuthenticatedClient, ProductTicker, OrderParams } from "coinbase-pro";
+import * as https from "https";
 
 const API_KEY: string = process.env.API_KEY;
 const API_SECRET: string = process.env.API_SECRET;
@@ -31,7 +31,9 @@ export class APIController {
         return coinbaseProClient.getProductTicker(currency);
     }
 
-    public getTickers(currencies: Array<string>): Promise<Array<ProductTicker>> {
+    public getTickers(
+        currencies: Array<string>
+    ): Promise<Array<ProductTicker>> {
         let promises: Array<Promise<ProductTicker>> = [];
         for (let currency of currencies) {
             promises.push(coinbaseProClient.getProductTicker(currency));
@@ -46,7 +48,9 @@ export class APIController {
     public getOrderBooks(currencies: Array<string>): Promise<any> {
         let promises: Array<Promise<any>> = [];
         for (let currency of currencies) {
-            promises.push(coinbaseProClient.getProductOrderBook(currency, { level: 2 }));
+            promises.push(
+                coinbaseProClient.getProductOrderBook(currency, { level: 2 })
+            );
         }
         return Promise.all(promises);
     }
@@ -59,7 +63,10 @@ export class APIController {
      * @returns PROMISE[ [ time, low, high, open, close, volume ], ...]
      * @memberof APIController
      */
-    public getHistoricClosingRatesByDay(range: number, currency: string): Promise<Array<number>> {
+    public getHistoricClosingRatesByDay(
+        range: number,
+        currency: string
+    ): Promise<Array<number>> {
         let currentDate = new Date();
         let periodDate = new Date(
             new Date().setDate(currentDate.getDate() - range)
@@ -76,10 +83,13 @@ export class APIController {
             });
     }
 
-    public getMultipleHistoricClosingRatesByDay(range: number, currencies: Array<string>) {
+    public getMultipleHistoricClosingRatesByDay(
+        range: number,
+        currencies: Array<string>
+    ) {
         let promises = [];
         for (let currency of currencies) {
-            promises.push(this.getHistoricClosingRatesByDay(range,currency));
+            promises.push(this.getHistoricClosingRatesByDay(range, currency));
         }
         return Promise.all(promises);
     }
