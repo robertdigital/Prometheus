@@ -1,15 +1,9 @@
 import { Db, MongoClient } from 'mongodb';
 import { Evaluation } from '../models/dataModels';
 
-const MONGODB_URI: string = process.env.MONGODB_URI
-    ? process.env.MONGODB_URI
-    : '';
-const DB_NAME: string = process.env.TEST
-    ? process.env.DB_NAME_TEST
-    : process.env.DB_NAME;
-const PRICE_COLLECTION: string = process.env.PRICE_COLLECTION
-    ? process.env.PRICE_COLLECTION
-    : '';
+const MONGODB_URI: string = process.env.MONGODB_URI;
+const DB_NAME: string = process.env.DB_NAME;
+const PRICE_COLLECTION: string = process.env.PRICE_COLLECTION;
 
 export class DBController {
     private cachedDb: Db | null = null;
