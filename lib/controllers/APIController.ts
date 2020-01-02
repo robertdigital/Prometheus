@@ -1,18 +1,10 @@
-import { AuthenticatedClient, ProductTicker, OrderParams } from 'coinbase-pro';
-import * as https from 'https';
+import { AuthenticatedClient, ProductTicker, OrderParams } from "coinbase-pro";
+import * as https from "https";
 
-const API_KEY: string = process.env.TEST
-    ? process.env.API_KEY_TEST
-    : process.env.API_KEY;
-const API_SECRET: string = process.env.TEST
-    ? process.env.API_SECRET_TEST
-    : process.env.API_SECRET;
-const PASS: string = process.env.TEST
-    ? process.env.PASS_PHRASE_TEST
-    : process.env.PASS_PHRASE;
-const API_URI: string = process.env.TEST
-    ? process.env.API_URI_TEST
-    : process.env.API_URI;
+const API_KEY: string = process.env.API_KEY;
+const API_SECRET: string = process.env.API_SECRET;
+const PASS: string = process.env.PASS_PHRASE;
+const API_URI: string = process.env.API_URI;
 const coinbaseProClient: AuthenticatedClient = new AuthenticatedClient(
     API_KEY,
     API_SECRET,
@@ -39,8 +31,28 @@ export class APIController {
         return coinbaseProClient.getProductTicker(currency);
     }
 
+    public getTickers(
+        currencies: Array<string>
+    ): Promise<Array<ProductTicker>> {
+        let promises: Array<Promise<ProductTicker>> = [];
+        for (let currency of currencies) {
+            promises.push(coinbaseProClient.getProductTicker(currency));
+        }
+        return Promise.all(promises);
+    }
+
     public getOrderBook(currency: string): Promise<any> {
         return coinbaseProClient.getProductOrderBook(currency, { level: 2 });
+    }
+
+    public getOrderBooks(currencies: Array<string>): Promise<any> {
+        let promises: Array<Promise<any>> = [];
+        for (let currency of currencies) {
+            promises.push(
+                coinbaseProClient.getProductOrderBook(currency, { level: 2 })
+            );
+        }
+        return Promise.all(promises);
     }
 
     /**
@@ -69,6 +81,17 @@ export class APIController {
                 console.log(data);
                 return this.slimCoinbaseHistory(data, 4);
             });
+    }
+
+    public getMultipleHistoricClosingRatesByDay(
+        range: number,
+        currencies: Array<string>
+    ) {
+        let promises = [];
+        for (let currency of currencies) {
+            promises.push(this.getHistoricClosingRatesByDay(range, currency));
+        }
+        return Promise.all(promises);
     }
 
     /**
