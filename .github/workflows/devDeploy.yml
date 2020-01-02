@@ -11,19 +11,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source code
+      - name: Checkout Dev Branch
         uses: actions/checkout@v2
         with:
           ref: dev
-      - name: Setup nodejs 12
+      - name: Setup NodeJS 12.X
         uses: actions/setup-node@v1
         with:
           node-version: '12.x'
-      - run: npm install
-      - run: tsc
+      - name: Install Dependencies
+        run: npm install
+      - name: Compile
+        run: tsc
       - name: Create Zip
         run: zip -r devDeployment.zip .
-      - name: AWS Lambda Deploy
+      - name: Deploy to AWS Lambda Prometheus-DEV
         uses: appleboy/lambda-action@v0.0.2
         with:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
