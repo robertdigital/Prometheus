@@ -51,7 +51,7 @@ export class DBController {
             })
             .catch(e => {
                 console.error(
-                    'Error: storeEvaluation - collection(x).insertOne(y) encountered an exception'
+                    'Error: storeEvaluation - collection(' + PRICE_COLLECTION + ').insertOne(' + data + ') encountered an exception'
                 );
                 console.error(e);
                 return null;
