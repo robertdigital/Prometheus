@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: 
+      - dev
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v1
+      - name: Setup nodejs 12
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - run: npm install
+      - run: tsc
+      - name: Create Zip
+        run: zip -r devDeployment.zip .
+      - name: AWS Lambda Deploy
+        uses: appleboy/lambda-action@v0.0.2
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ secrets.AWS_REGION }}
+          function_name: Prometheus-DEV
+          zip_file: devDeployment.zip
+
