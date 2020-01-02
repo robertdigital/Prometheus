@@ -1,4 +1,4 @@
-name: devDeploy
+name: development
 
 on:
   push:
