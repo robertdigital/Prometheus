@@ -1,4 +1,4 @@
-import { OrderParams, Account } from 'coinbase-pro';
+import { OrderParams, Account } from "coinbase-pro";
 
 export class Evaluation {
     public date: Date;

@@ -15,3 +15,4 @@ export const BTC_PRECISION: number = 8;
 export const RISK_PERCENT: number = 0.02;
 
 export const EXPECTABLE_CHANGE: number = .12;
+export const REWARD_RISK_RATIO: number = 2;
