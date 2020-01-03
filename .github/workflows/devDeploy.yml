@@ -11,10 +11,10 @@ jobs:
     test:
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout Master
+            - name: Checkout Dev
               uses: actions/checkout@v2
               with:
-                  ref: master
+                  ref: dev
             - name: Setup NodeJS 12.X
               uses: actions/setup-node@v1
               with:

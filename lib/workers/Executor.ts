@@ -18,7 +18,7 @@ export class Executor {
         dbController: DBController,
         evaluation: Evaluation
     ) {
-        // Save Evaluation
+        // Save Evaluation -- keep in mind that the evaluation is stored before the orders are placed
         return dbController
             .connectToDatabase()
             .then((db: Db) => {
