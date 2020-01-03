@@ -25,6 +25,7 @@ jobs:
               run: npm test
     deploy:
         runs-on: ubuntu-latest
+        needs: test
         steps:
             - name: Checkout Dev Branch
               uses: actions/checkout@v2
