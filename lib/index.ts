@@ -24,6 +24,7 @@ const handler: Handler = (event: any, context: Context, callback: Callback) => {
     }
 
     let currency = CONSTANTS.BTC_USD;
+    //let currencies = []
     Promise.all([
         apiController.getTicker(currency),
         apiController.getAccounts(),
