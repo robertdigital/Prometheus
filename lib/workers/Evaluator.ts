@@ -135,7 +135,9 @@ export class Evaluator {
     ): string {
         let riskAmount: number = CONSTANTS.RISK_PERCENT * accountValue;
         let orderSize: string;
-        let maxOrderSize = ((riskAmount * CONSTANTS.REWARD_RISK_RATIO) / CONSTANTS.EXPECTABLE_CHANGE);
+        let maxOrderSize =
+            (riskAmount * CONSTANTS.REWARD_RISK_RATIO) /
+            CONSTANTS.EXPECTABLE_CHANGE;
         for (let account of accounts) {
             if (account.currency == currency) {
                 if (currency == CONSTANTS.USD) {
@@ -180,8 +182,14 @@ export class Evaluator {
      * @returns {string}
      * @memberof Evaluator
      */
-    private calculateStopLossLimitOrderPricePoint(ticker: ProductTicker): string {
-        return (parseFloat(ticker.price) - (parseFloat(ticker.price) * (CONSTANTS.EXPECTABLE_CHANGE / CONSTANTS.REWARD_RISK_RATIO))).toFixed(CONSTANTS.USD_PRECISION);
+    private calculateStopLossLimitOrderPricePoint(
+        ticker: ProductTicker
+    ): string {
+        return (
+            parseFloat(ticker.price) -
+            parseFloat(ticker.price) *
+            (CONSTANTS.EXPECTABLE_CHANGE / CONSTANTS.REWARD_RISK_RATIO)
+        ).toFixed(CONSTANTS.USD_PRECISION);
     }
 
     /**
@@ -210,13 +218,10 @@ export class Evaluator {
                     CONSTANTS.USD,
                     ticker
                 );
-                let limitOrderSize = this.calculateOrderSize(
-                    accountState.totalValue,
-                    accounts,
-                    CONSTANTS.BTC,
-                    ticker
-                );
                 let orderSizeNumber = parseFloat(orderSize);
+                let limitOrderSize = (
+                    orderSizeNumber / parseFloat(ticker.price)
+                ).toFixed(CONSTANTS.BTC_PRECISION);
                 let marketOrder = {
                     type: "market",
                     side: "buy",
