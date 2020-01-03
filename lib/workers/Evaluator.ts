@@ -57,7 +57,7 @@ export class Evaluator {
                 ? new Indicators(macd[0], macdSignal[0], lastEval.indicators)
                 : new Indicators(macd[0], macdSignal[0]);
 
-        evaluation.orders = this.decideOrder(
+        evaluation.orders = this.determineOrder(
             ticker,
             evaluation.indicators,
             accounts,
@@ -203,7 +203,7 @@ export class Evaluator {
      * @returns {Array<OrderParams>} Array of orders. empty array if no order to be placed.
      * @memberof Evaluator
      */
-    private decideOrder(
+    private determineOrder(
         ticker: ProductTicker,
         indicators: Indicators,
         accounts: Array<Account>,
