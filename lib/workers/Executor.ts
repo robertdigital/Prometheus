@@ -29,7 +29,6 @@ export class Executor {
                 if (evaluation.orders.length > 0) {
                     console.info("Order Request Confirmed");
                     let apiController: APIController = new APIController();
-                    let success: Array<boolean> = [];
                     let orders = evaluation.orders.length;
                     console.log(orders + " orders to place");
                     let promises = evaluation.orders.map((order: OrderParams) =>
