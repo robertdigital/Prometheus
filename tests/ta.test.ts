@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import 'mocha';
 
-import { TechnicalAnalyzer } from '../dist/utilities/TAUtils';
+import { TechnicalAnalyzer } from '../lib/utilities/TAUtils';
 
 describe('Simple Moving Average', function () {
     it('returns average', function () {
