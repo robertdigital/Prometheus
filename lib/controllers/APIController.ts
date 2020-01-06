@@ -1,4 +1,9 @@
-import { AuthenticatedClient, ProductTicker, OrderParams } from "coinbase-pro";
+import {
+    AuthenticatedClient,
+    ProductTicker,
+    OrderParams,
+    Account
+} from "coinbase-pro";
 import * as https from "https";
 
 const API_KEY: string = process.env.API_KEY;
@@ -45,7 +50,7 @@ export class APIController {
         return coinbaseProClient.getProductOrderBook(currency, { level: 2 });
     }
 
-    public getOrderBooks(currencies: Array<string>): Promise<any> {
+    public getOrderBooks(currencies: Array<string>): Promise<Array<any>> {
         let promises: Array<Promise<any>> = [];
         for (let currency of currencies) {
             promises.push(
@@ -86,7 +91,7 @@ export class APIController {
     public getMultipleHistoricClosingRatesByDay(
         range: number,
         currencies: Array<string>
-    ) {
+    ): Promise<Array<Array<number>>> {
         let promises = [];
         for (let currency of currencies) {
             promises.push(this.getHistoricClosingRatesByDay(range, currency));
@@ -117,7 +122,10 @@ export class APIController {
      * @returns
      * @memberof APIController
      */
-    public slimCoinbaseHistory(history: Array<Array<number>>, base: number) {
+    public slimCoinbaseHistory(
+        history: Array<Array<number>>,
+        base: number
+    ): Array<number> {
         let slimmedArray: Array<number> = [];
         for (let i = 0; i < history.length; i++) {
             slimmedArray.push(history[i][base]);
@@ -125,7 +133,7 @@ export class APIController {
         return slimmedArray;
     }
 
-    public getAccounts() {
+    public getAccounts(): Promise<Array<Account>> {
         return coinbaseProClient.getAccounts();
     }
 }

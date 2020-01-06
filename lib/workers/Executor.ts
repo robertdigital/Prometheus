@@ -17,12 +17,12 @@ export class Executor {
     public async executeEval(
         dbController: DBController,
         evaluation: Evaluation
-    ) {
+    ): Promise<Array<any>> {
         // Save Evaluation -- keep in mind that the evaluation is stored before the orders are placed
         return dbController
             .connectToDatabase()
             .then((db: Db) => {
-                return dbController.storeEvaluation(db, evaluation);
+                return dbController.storeEvaluation(db, "BTC-USD", evaluation);
             })
             .then((evaluation: Evaluation) => {
                 // Once the evaluation is saved, check if there is an order;
@@ -45,5 +45,15 @@ export class Executor {
                     return [];
                 }
             });
+    }
+    public executeMultipleEvals(
+        dbController: DBController,
+        evaluations: Array<Evaluation>
+    ): Promise<Array<Array<any>>> {
+        let promises = [];
+        for (let evaluation of evaluations) {
+            promises.push(this.executeEval(dbController, evaluation));
+        }
+        return Promise.all(promises);
     }
 }
