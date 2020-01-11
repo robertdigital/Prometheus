@@ -66,6 +66,28 @@ export class Evaluator {
         return evaluation;
     }
 
+    public multiEvaluation(
+        tickers: Array<ProductTicker>,
+        accounts: Array<Account>,
+        orderBooks: Array<Array<any>>,
+        historicRates: Array<Array<number>>,
+        lastEvaluations: Array<Evaluation>
+    ) {
+        let promises = [];
+        for (let i = 0; i < tickers.length; i++) {
+            promises.push(
+                this.evaluate(
+                    tickers[i],
+                    accounts,
+                    orderBooks[i],
+                    historicRates[i],
+                    lastEvaluations[0][i]
+                )
+            );
+        }
+        return Promise.all(promises);
+    }
+
     /**
      * private function to get a quick valuation of all the accounts associated with the user.
      * @private
@@ -83,10 +105,10 @@ export class Evaluator {
                 console.info("Account (" + account.currency + ") :");
                 console.info(
                     " >balance - " +
-                    account.balance +
-                    "(" +
-                    account.currency +
-                    ")"
+                        account.balance +
+                        "(" +
+                        account.currency +
+                        ")"
                 );
                 accountValue += parseFloat(
                     (
@@ -95,7 +117,7 @@ export class Evaluator {
                 );
                 console.info(
                     " >balance in usd - " +
-                    parseFloat(account.balance) * parseFloat(tick.price)
+                        parseFloat(account.balance) * parseFloat(tick.price)
                 );
             } else if (account.currency == CONSTANTS.USD) {
                 console.info("Account (USD) :");
@@ -104,10 +126,10 @@ export class Evaluator {
                 );
                 console.info(
                     " >balance - " +
-                    account.balance +
-                    "(" +
-                    account.currency +
-                    ")"
+                        account.balance +
+                        "(" +
+                        account.currency +
+                        ")"
                 );
             }
         }
@@ -187,7 +209,7 @@ export class Evaluator {
         return (
             parseFloat(ticker.price) -
             parseFloat(ticker.price) *
-            (CONSTANTS.EXPECTABLE_CHANGE / CONSTANTS.REWARD_RISK_RATIO)
+                (CONSTANTS.EXPECTABLE_CHANGE / CONSTANTS.REWARD_RISK_RATIO)
         ).toFixed(CONSTANTS.USD_PRECISION);
     }
 

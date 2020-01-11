@@ -23,44 +23,51 @@ const handler: Handler = (event: any, context: Context, callback: Callback) => {
         dbController = new DBController();
     }
 
-    let currency = CONSTANTS.BTC_USD;
-    //let currencies = []
+    // let currency = CONSTANTS.BTC_USD;
+    let currencies = [CONSTANTS.BTC_USD];
     Promise.all([
-        apiController.getTicker(currency),
+        apiController.getTickers(currencies),
         apiController.getAccounts(),
-        apiController.getOrderBook(currency),
-        apiController.getHistoricClosingRatesByDay(100, currency),
+        apiController.getOrderBooks(currencies),
+        apiController.getMultipleHistoricClosingRatesByDay(100, currencies),
         dbController.connectToDatabase().then((db: Db) => {
-            return dbController.getLastEvaluation(db);
+            return dbController.getLastEvaluations(db, currencies);
         })
     ])
         .then(
-            ([ticker, accounts, orderBook, historicRates, dbConnection]: [
-                ProductTicker,
+            ([ticker, accounts, orderBook, historicRates, lastEvaluation]: [
+                Array<ProductTicker>,
                 Array<Account>,
-                Array<any>,
-                Array<number>,
+                Array<Array<any>>,
+                Array<Array<number>>,
                 any
             ]) => {
                 if (!evaluator) {
                     evaluator = new Evaluator();
                 }
-                return evaluator.evaluate(
+                return evaluator.multiEvaluation(
                     ticker,
                     accounts,
                     orderBook,
                     historicRates,
-                    dbConnection[0]
+                    lastEvaluation
                 );
+                // return evaluator.evaluate(
+                //     ticker,
+                //     accounts,
+                //     orderBook,
+                //     historicRates,
+                //     lastEvaluation[0]
+                // );
             }
         )
-        .then((evaluation: Evaluation) => {
+        .then((evaluation: Array<Evaluation>) => {
             if (!executor) {
                 executor = new Executor();
             }
-            return executor.executeEval(dbController, evaluation);
+            return executor.executeMultipleEvals(dbController, evaluation);
         })
-        .then((placedOrders: Array<OrderResult>) => {
+        .then((placedOrders: Array<Array<OrderResult>>) => {
             if (placedOrders && placedOrders.length > 0) {
                 callback(null, "ORDER(S) PLACED");
             } else {

@@ -3,7 +3,6 @@ import { Evaluation } from "../models/dataModels";
 
 const MONGODB_URI: string = process.env.MONGODB_URI;
 const DB_NAME: string = process.env.DB_NAME;
-const PRICE_COLLECTION: string = process.env.PRICE_COLLECTION;
 
 export class DBController {
     private cachedDb: Db | null = null;
@@ -35,9 +34,13 @@ export class DBController {
         }
     }
 
-    public storeEvaluation(db: Db, data: Evaluation): Promise<Evaluation> {
+    public storeEvaluation(
+        db: Db,
+        collection: string,
+        data: Evaluation
+    ): Promise<Evaluation> {
         return db
-            .collection(PRICE_COLLECTION)
+            .collection(collection)
             .insertOne(data)
             .then(() => {
                 console.info("***Evaluation Stored Successfully***");
@@ -45,7 +48,11 @@ export class DBController {
             })
             .catch(e => {
                 console.error(
-                    'Error: storeEvaluation - collection(' + PRICE_COLLECTION + ').insertOne(' + data + ') encountered an exception'
+                    "Error: storeEvaluation - collection(" +
+                        collection +
+                        ").insertOne(" +
+                        data +
+                        ") encountered an exception"
                 );
                 console.error(e);
                 return null;
@@ -59,12 +66,20 @@ export class DBController {
      * @returns {Promise<Array<any>>}
      * @memberof DBController
      */
-    public getLastEvaluation(db: Db): Promise<Array<any>> {
+    public getLastEvaluation(db: Db, collection: string): Promise<Array<any>> {
         return db
-            .collection(PRICE_COLLECTION)
+            .collection(collection)
             .find({})
             .limit(1)
             .sort({ $natural: -1 })
             .toArray();
+    }
+
+    public getLastEvaluations(db: Db, collections: Array<string>) {
+        let promises: Array<Promise<any>> = [];
+        for (let collection of collections) {
+            promises.push(this.getLastEvaluation(db, collection));
+        }
+        return Promise.all(promises);
     }
 }
