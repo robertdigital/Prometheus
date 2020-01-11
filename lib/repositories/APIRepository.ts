@@ -4,7 +4,6 @@ import {
     OrderParams,
     Account
 } from "coinbase-pro";
-import * as https from "https";
 
 const API_KEY: string = process.env.API_KEY;
 const API_SECRET: string = process.env.API_SECRET;

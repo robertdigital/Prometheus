@@ -71,7 +71,7 @@ export class Evaluator {
         accounts: Array<Account>,
         orderBooks: Array<Array<any>>,
         historicRates: Array<Array<number>>,
-        lastEvaluations: Array<Evaluation>
+        lastEvaluations: Array<Array<Evaluation>>
     ) {
         let promises = [];
         for (let i = 0; i < tickers.length; i++) {
@@ -105,10 +105,10 @@ export class Evaluator {
                 console.info("Account (" + account.currency + ") :");
                 console.info(
                     " >balance - " +
-                        account.balance +
-                        "(" +
-                        account.currency +
-                        ")"
+                    account.balance +
+                    "(" +
+                    account.currency +
+                    ")"
                 );
                 accountValue += parseFloat(
                     (
@@ -117,7 +117,7 @@ export class Evaluator {
                 );
                 console.info(
                     " >balance in usd - " +
-                        parseFloat(account.balance) * parseFloat(tick.price)
+                    parseFloat(account.balance) * parseFloat(tick.price)
                 );
             } else if (account.currency == CONSTANTS.USD) {
                 console.info("Account (USD) :");
@@ -126,10 +126,10 @@ export class Evaluator {
                 );
                 console.info(
                     " >balance - " +
-                        account.balance +
-                        "(" +
-                        account.currency +
-                        ")"
+                    account.balance +
+                    "(" +
+                    account.currency +
+                    ")"
                 );
             }
         }
@@ -209,7 +209,7 @@ export class Evaluator {
         return (
             parseFloat(ticker.price) -
             parseFloat(ticker.price) *
-                (CONSTANTS.EXPECTABLE_CHANGE / CONSTANTS.REWARD_RISK_RATIO)
+            (CONSTANTS.EXPECTABLE_CHANGE / CONSTANTS.REWARD_RISK_RATIO)
         ).toFixed(CONSTANTS.USD_PRECISION);
     }
 

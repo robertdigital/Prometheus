@@ -66,7 +66,7 @@ export class DBRepository {
      * @returns {Promise<Array<any>>}
      * @memberof DBRepository
      */
-    public getLastEvaluation(db: Db, collection: string): Promise<Array<any>> {
+    public getLastEvaluation(db: Db, collection: string): Promise<Array<Evaluation>> {
         return db
             .collection(collection)
             .find({})
@@ -75,7 +75,7 @@ export class DBRepository {
             .toArray();
     }
 
-    public getLastEvaluations(db: Db, collections: Array<string>) {
+    public getLastEvaluations(db: Db, collections: Array<string>): Promise<Array<Array<Evaluation>>> {
         let promises: Array<Promise<any>> = [];
         for (let collection of collections) {
             promises.push(this.getLastEvaluation(db, collection));
