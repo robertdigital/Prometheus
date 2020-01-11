@@ -5,7 +5,6 @@ import {
     MarketOrder,
     Account,
     LimitOrder,
-    StopOrder
 } from "coinbase-pro";
 import { Evaluation, Indicators, AccountState } from "../models/dataModels";
 import * as CONSTANTS from "../constants/constants";
