@@ -4,7 +4,7 @@ import { Evaluation } from "../models/dataModels";
 const MONGODB_URI: string = process.env.MONGODB_URI;
 const DB_NAME: string = process.env.DB_NAME;
 
-export class DBController {
+export class DBRepository {
     private cachedDb: Db | null = null;
 
     public connectToDatabase(): Promise<Db> {
@@ -49,10 +49,10 @@ export class DBController {
             .catch(e => {
                 console.error(
                     "Error: storeEvaluation - collection(" +
-                        collection +
-                        ").insertOne(" +
-                        data +
-                        ") encountered an exception"
+                    collection +
+                    ").insertOne(" +
+                    data +
+                    ") encountered an exception"
                 );
                 console.error(e);
                 return null;
@@ -64,7 +64,7 @@ export class DBController {
      *
      * @param {Db} db
      * @returns {Promise<Array<any>>}
-     * @memberof DBController
+     * @memberof DBRepository
      */
     public getLastEvaluation(db: Db, collection: string): Promise<Array<any>> {
         return db
