@@ -22,15 +22,15 @@ const coinbaseProClient: AuthenticatedClient = new AuthenticatedClient(
  * Contains methods to simplify the client requests and add logging.
  *
  * @export
- * @class APIController
+ * @class APIRepository
  */
-export class APIController {
+export class APIRepository {
     /**
      * gets a ProductTicker object from the Coinbase Pro API which contains a security's current price
      *
      * @param {string} currency
      * @returns {Promise<ProductTicker>}
-     * @memberof APIController
+     * @memberof APIRepository
      */
     public getTicker(currency: string): Promise<ProductTicker> {
         return coinbaseProClient.getProductTicker(currency);
@@ -66,7 +66,7 @@ export class APIController {
      * @param {number} range days to go back
      * @param {string} currency the currency to get rates for. (BTC-USD,ETH-USD,etc.)
      * @returns PROMISE[ [ time, low, high, open, close, volume ], ...]
-     * @memberof APIController
+     * @memberof APIRepository
      */
     public getHistoricClosingRatesByDay(
         range: number,
@@ -103,7 +103,7 @@ export class APIController {
      * sends a order request to the Coinbase API
      *
      * @param {OrderParams} order an OrderParams object returned from the Evaluator inside the evaluation;
-     * @memberof APIController
+     * @memberof APIRepository
      */
     public executeOrder(order: OrderParams) {
         return coinbaseProClient.placeOrder(order);
@@ -120,7 +120,7 @@ export class APIController {
      * @param {Array<Array<number>>} history
      * @param {number} base
      * @returns
-     * @memberof APIController
+     * @memberof APIRepository
      */
     public slimCoinbaseHistory(
         history: Array<Array<number>>,

@@ -1,5 +1,5 @@
 import { DBController } from "../controllers/DBController";
-import { APIController } from "../controllers/APIController";
+import { APIRepository } from "../controllers/APIRepository";
 import { Evaluation } from "../models/dataModels";
 import { Db } from "mongodb";
 import { OrderResult, OrderParams } from "coinbase-pro";
@@ -28,7 +28,7 @@ export class Executor {
                 // Once the evaluation is saved, check if there is an order;
                 if (evaluation.orders.length > 0) {
                     console.info("Order Request Confirmed");
-                    let apiController: APIController = new APIController();
+                    let apiController: APIRepository = new APIRepository();
                     let orders = evaluation.orders.length;
                     console.log(orders + " orders to place");
                     let promises = evaluation.orders.map((order: OrderParams) =>
