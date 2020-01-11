@@ -58,6 +58,7 @@ const handler: Handler = (event: any, context: Context, callback: Callback) => {
             return executor.executeMultipleEvals(dbService, apiService, evaluations, currencies);
         })
         .then((placedOrders: Array<Array<OrderResult>>) => {
+            console.log(placedOrders);
             if (placedOrders && placedOrders.length > 0) {
                 callback(null, "ORDER(S) PLACED");
             } else {
