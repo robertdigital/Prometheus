@@ -22,8 +22,11 @@ const handler: Handler = (event: any, context: Context, callback: Callback) => {
         dbService = new DBService();
     }
 
+    let products = apiService.getProducts();
+
     // let currency = CONSTANTS.BTC_USD;
     let currencies = [CONSTANTS.BTC_USD, CONSTANTS.BCH_USD];
+
     Promise.all([
         apiService.getTickers(currencies),
         apiService.getAccounts(),
