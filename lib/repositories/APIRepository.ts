@@ -24,6 +24,10 @@ const coinbaseProClient: AuthenticatedClient = new AuthenticatedClient(
  * @class APIRepository
  */
 export class APIRepository {
+
+    public getProducts() {
+        return coinbaseProClient.getProducts();
+    }
     /**
      * gets a ProductTicker object from the Coinbase Pro API which contains a security's current price
      *

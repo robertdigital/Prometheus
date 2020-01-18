@@ -4,6 +4,10 @@ import { ProductTicker, Account, OrderParams, OrderResult } from 'coinbase-pro';
 export class APIService {
     private apiRepo: APIRepository;
 
+    public getProducts() {
+        return this.apiRepo.getProducts();
+    }
+
     public getTickers(currencies): Promise<Array<ProductTicker>> {
         let promises: Array<Promise<ProductTicker>> = [];
         if (!this.apiRepo) {

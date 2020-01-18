@@ -2,6 +2,7 @@ export const BTC: string = 'BTC';
 export const USD: string = 'USD';
 export const BTC_USD: string = 'BTC-USD';
 export const BCH_USD: string = 'BCH-USD';
+export const ETH_USD: string = 'ETH-USD';
 export const MARKET_ORDER: string = 'market';
 export const LIMIT_ORDER: string = 'limit';
 export const BUY: string = 'buy';
