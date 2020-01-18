@@ -22,26 +22,28 @@ const handler: Handler = (event: any, context: Context, callback: Callback) => {
         dbService = new DBService();
     }
 
-    let products = apiService.getProducts();
 
     // let currency = CONSTANTS.BTC_USD;
-    let currencies = [CONSTANTS.BTC_USD, CONSTANTS.BCH_USD];
+    let currencies = [CONSTANTS.BTC_USD];
 
     Promise.all([
         apiService.getTickers(currencies),
         apiService.getAccounts(),
         apiService.getOrderBooks(currencies),
         apiService.getHistoricClosingRatesByDayPerCurrency(100, currencies),
-        dbService.getMostRecentEvaluations(currencies)
+        dbService.getMostRecentEvaluations(currencies),
+        apiService.getProducts()
     ])
         .then(
-            ([ticker, accounts, orderBook, historicRates, lastEvaluations]: [
+            ([ticker, accounts, orderBook, historicRates, lastEvaluations, products]: [
                 Array<ProductTicker>,
                 Array<Account>,
                 Array<Array<any>>,
                 Array<Array<number>>,
-                Array<Array<Evaluation>>
+                Array<Array<Evaluation>>,
+                any
             ]) => {
+                console.log(products)
                 if (!evaluator) {
                     evaluator = new Evaluator();
                 }
