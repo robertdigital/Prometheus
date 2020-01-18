@@ -32,6 +32,7 @@ export class APIRepository {
      * @memberof APIRepository
      */
     public getTicker(currency: string): Promise<ProductTicker> {
+        console.info("Retrieving ticker for " + currency);
         return coinbaseProClient.getProductTicker(currency);
     }
 
